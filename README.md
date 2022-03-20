@@ -1,6 +1,9 @@
 # phishing_framework
 
-A new Flutter project.
+A phishing campaign management tool built with Flutter.
+
+## Project Links:
+Concept Paper Link: https://docs.google.com/document/d/1A1YGltLxfhI7H0cj7bWgdUoDfFdNGlzI/edit?usp=sharing&ouid=105825795590420324980&rtpof=true&sd=true
 
 ## Getting Started
 
