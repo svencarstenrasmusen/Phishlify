@@ -5,6 +5,9 @@ A phishing campaign management tool built with Flutter.
 ## Project Links:
 Concept Paper Link: https://docs.google.com/document/d/1A1YGltLxfhI7H0cj7bWgdUoDfFdNGlzI/edit?usp=sharing&ouid=105825795590420324980&rtpof=true&sd=true
 
+Kanban Link: https://trello.com/invite/b/xvFFSFnw/ee2fd24519b6886ddaf4c5433c849c0d/kanban-board
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
