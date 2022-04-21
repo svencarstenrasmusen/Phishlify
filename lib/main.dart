@@ -39,8 +39,8 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _loginPasswordFocus = FocusNode();
 
   //TEXTFIELD CONTROLLERS
-  TextEditingController loginEmailController = TextEditingController();
-  TextEditingController loginPasswordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   //KEYS
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 5),
                 TextFormField(
-                  controller: loginEmailController,
+                  controller: emailController,
                   decoration: const InputDecoration(
                       labelText: "Enter your email",
                       suffixIcon: Icon(Icons.email_outlined),
@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 5),
                 TextFormField(
-                  controller: loginEmailController,
+                  controller: passwordController,
                   decoration: const InputDecoration(
                       labelText: "Enter your password",
                       suffixIcon: Icon(Icons.vpn_key),
