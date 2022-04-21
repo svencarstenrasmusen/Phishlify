@@ -201,7 +201,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: Text("Login",
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       onTap: () {
-                        print("navigate to login");
+                        Navigator.pop(context);
                       },
                     )
                   ],
