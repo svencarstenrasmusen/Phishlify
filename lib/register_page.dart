@@ -150,7 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 5),
                 TextFormField(
-                  controller: passwordController,
+                  controller: passwordConfirmController,
                   obscureText: true,
                   decoration: const InputDecoration(
                       labelText: "Confirm your password",
