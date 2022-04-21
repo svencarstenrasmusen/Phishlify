@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phishing_framework/register_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => const LoginPage(title: "Home Page"),
+        '/': (context) => const LoginPage(title: "Login Page"),
+        '/register': (context) => const RegisterPage(title: "Register Page")
       },
     );
   }
