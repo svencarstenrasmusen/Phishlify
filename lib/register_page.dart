@@ -93,6 +93,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   textAlign: TextAlign.left,
                 ),
                 SizedBox(height: 25),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Email",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(color: Colors.grey)),
+                ),
+                SizedBox(height: 5),
                 TextFormField(
                   controller: emailController,
                   decoration: const InputDecoration(
