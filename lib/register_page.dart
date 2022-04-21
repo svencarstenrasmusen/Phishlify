@@ -1,51 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:phishing_framework/register_page.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginPage(title: "Login Page"),
-        '/register': (context) => const RegisterPage(title: "Register Page")
-      },
-    );
-  }
-}
-
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key, required this.title}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+
+class _RegisterPageState extends State<RegisterPage> {
   //FOCUS NODES
-  final FocusNode _loginEmailFocus = FocusNode();
-  final FocusNode _loginPasswordFocus = FocusNode();
+  final FocusNode _nameFocus = FocusNode();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+  final FocusNode _passwordConfirmFocus = FocusNode();
 
   //TEXTFIELD CONTROLLERS
+  TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordConfirmController = TextEditingController();
 
   //KEYS
-  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
 
-  bool rememberMe = false;
+  bool termAgreement = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,28 +36,28 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         child: Center(
             child: Row(
-            children: [
-              Container(
-                height: height,
-                width: width / 2,
-                child: Center(child: loginForm()),
-              ),
-              Container(
-                height: height,
-                width: width / 2,
-                color: const Color(0xFF0A150F),
-                child: Image.asset("assets/images/loginImage.png",
-                    fit: BoxFit.fitHeight),
-              )
-            ],
-        )),
+              children: [
+                Container(
+                  height: height,
+                  width: width / 2,
+                  child: Center(child: registerForm()),
+                ),
+                Container(
+                  height: height,
+                  width: width / 2,
+                  color: const Color(0xFF0A150F),
+                  child: Image.asset("assets/images/loginImage.png",
+                      fit: BoxFit.fitHeight),
+                )
+              ],
+            )),
       ),
     );
   }
 
-  Widget loginForm() {
+  Widget registerForm() {
     return Form(
-        key: _loginFormKey,
+        key: _registerFormKey,
         child: SizedBox(
             width: 400,
             child: Column(
@@ -85,22 +65,39 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "Hello, Welcome Back!",
+                  "Sign Up",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 50),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Email Address",
+                  child: Text("Full Name",
                       textAlign: TextAlign.left,
                       style: TextStyle(color: Colors.grey)),
                 ),
                 SizedBox(height: 5),
                 TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                      labelText: "Enter your name and surname",
+                      suffixIcon: Icon(Icons.person),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7))),
+                      errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 5))),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter your name.";
+                    }
+                  },
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 25),
+                TextFormField(
                   controller: emailController,
                   decoration: const InputDecoration(
                       labelText: "Enter your email",
-                      suffixIcon: Icon(Icons.email_outlined),
+                      suffixIcon: Icon(Icons.mail_outline),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(7))),
                       errorBorder: OutlineInputBorder(
@@ -122,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 5),
                 TextFormField(
                   controller: passwordController,
+                  obscureText: true,
                   decoration: const InputDecoration(
                       labelText: "Enter your password",
                       suffixIcon: Icon(Icons.vpn_key),
@@ -137,6 +135,31 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.left,
                 ),
                 SizedBox(height: 25),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Confirm Password",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(color: Colors.grey)),
+                ),
+                SizedBox(height: 5),
+                TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                      labelText: "Confirm your password",
+                      suffixIcon: Icon(Icons.vpn_key),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7))),
+                      errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 5))),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please confirm your password.";
+                    }
+                  },
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(height: 25),
                 Container(
                   child: Row(
                     children: [
@@ -144,20 +167,15 @@ class _LoginPageState extends State<LoginPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4)),
                         activeColor: Colors.green,
-                        value: rememberMe,
+                        value: termAgreement,
                         onChanged: (value) => {
                           setState(() {
-                            rememberMe = !rememberMe;
+                            termAgreement = !termAgreement;
                           })
                         },
                       ),
-                      Text("Remember me", style: TextStyle(color: Colors.grey)),
+                      Text("I agree to the terms of Phishlify", style: TextStyle(color: Colors.grey)),
                       Spacer(),
-                      GestureDetector(
-                        child: Text("Forgot Password?",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        onTap: () => print("Clicked forgot password."),
-                      )
                     ],
                   ),
                 ),
@@ -169,22 +187,23 @@ class _LoginPageState extends State<LoginPage> {
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(7)),
-                  child: Text("Login",
+                  child: Text("Create Account",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold)),
-                  onPressed: () => {print("Logging in...")},
+                  onPressed: () => {print("Creating account...")},
                 ),
                 SizedBox(height: 25),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account? "),
+                    Text("Already have an account? "),
                     GestureDetector(
-                        child: Text("Sign up",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        onTap: () {
-                            Navigator.pushNamed(context, '/register');
-                        })
+                      child: Text("Login",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    )
                   ],
                 )
               ],
