@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phishing_framework/dashboard_page.dart';
 import 'package:phishing_framework/register_page.dart';
 
 void main() {
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginPage(title: "Login Page"),
-        '/register': (context) => const RegisterPage(title: "Register Page")
+        '/register': (context) => const RegisterPage(title: "Register Page"),
+        '/dashboard': (context) => const DashboardPage(title: "Dashboard Page")
       },
     );
   }
@@ -173,7 +175,9 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text("Login",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold)),
-                  onPressed: () => {print("Logging in...")},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/dashboard');
+                  },
                 ),
                 SizedBox(height: 25),
                 Row(
