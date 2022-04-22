@@ -22,8 +22,10 @@ class _DashboardPageState extends State<DashboardPage> {
         width: width,
         child: Row(
           children: [
-            Expanded(flex: 1, child: menuBar()),
-            Expanded(flex: 4, child: Container())
+            menuBar(),
+            Expanded(child: Container(
+                child: Center(
+                    child: Text("You currently have no campaigns. Create a campaign on the left in the menu."))))
           ],
         ),
       ),
@@ -32,6 +34,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget menuBar() {
     return Container(
+      width: 200,
       padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
       color: const Color(0xFF0A150F),
       child: Column(
