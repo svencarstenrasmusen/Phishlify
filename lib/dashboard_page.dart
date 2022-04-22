@@ -49,7 +49,7 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 10),
           menuButton(Icons.add_box_outlined, "Campaigns", "/dashboard", false),
           const SizedBox(height: 10),
-          menuButton(Icons.folder_outlined, "Projects", "/dashboard", false),
+          menuButton(Icons.folder_outlined, "Projects", "/projects", false),
           const SizedBox(height: 10),
           menuButton(Icons.settings_outlined, "Settings", "/dashboard", false),
           const SizedBox(height: 50),
