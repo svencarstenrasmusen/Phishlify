@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({Key? key, required this.title}) : super(key: key);
+class ProjectsPage extends StatefulWidget {
+  const ProjectsPage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<ProjectsPage> createState() => _ProjectsPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-
-
+class _ProjectsPageState extends State<ProjectsPage> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -25,12 +23,13 @@ class _DashboardPageState extends State<DashboardPage> {
             menuBar(),
             Expanded(child: Container(
                 child: Center(
-                    child: Text("You currently have no campaigns. Create a campaign on the left in the menu."))))
+                    child: Text("You currently have no projects. Create a project on the top right with the ${"Create New Project"} button."))))
           ],
         ),
       ),
     );
   }
+
 
   Widget menuBar() {
     return Container(
@@ -45,11 +44,11 @@ class _DashboardPageState extends State<DashboardPage> {
               alignment: Alignment.centerLeft,
               child: const Text("GENERAL", style: TextStyle(fontSize: 10, color: Colors.grey))),
           const SizedBox(height: 10),
-          menuButton(Icons.analytics_outlined, "Dashboard", "/dashboard", true),
+          menuButton(Icons.analytics_outlined, "Dashboard", "/dashboard", false),
           const SizedBox(height: 10),
           menuButton(Icons.add_box_outlined, "Campaigns", "/dashboard", false),
           const SizedBox(height: 10),
-          menuButton(Icons.folder_outlined, "Projects", "/projects", false),
+          menuButton(Icons.folder_outlined, "Projects", "/projects", true),
           const SizedBox(height: 10),
           menuButton(Icons.settings_outlined, "Settings", "/dashboard", false),
           const SizedBox(height: 50),
@@ -64,6 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
     );
   }
+
 
   Widget menuButton(IconData icon, String text, String routeName, bool selected) {
     return MaterialButton(
@@ -88,5 +88,4 @@ class _DashboardPageState extends State<DashboardPage> {
       },
     );
   }
-
 }

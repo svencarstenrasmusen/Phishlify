@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phishing_framework/dashboard_page.dart';
 import 'package:phishing_framework/register_page.dart';
+import 'package:phishing_framework/projects_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginPage(title: "Login Page"),
         '/register': (context) => const RegisterPage(title: "Register Page"),
-        '/dashboard': (context) => const DashboardPage(title: "Dashboard Page")
+        '/dashboard': (context) => const DashboardPage(title: "Dashboard Page"),
+        '/projects': (context) => const ProjectsPage(title: "Projects Page"),
       },
     );
   }
