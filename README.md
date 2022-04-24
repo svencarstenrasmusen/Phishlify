@@ -1,6 +1,5 @@
 # phishing_framework
-test
-test 2
+
 A phishing campaign management tool built with Flutter.
 
 ## Try out the current UI!
