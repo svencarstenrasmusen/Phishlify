@@ -4,7 +4,7 @@ const port = 3000;
 const connection = require('./db');
 
 // gives you projects against email 
-app.get('/projects/:email', (request, response) => {
+app.get('/getProjects/:email', (request, response) => {
 
     const email = request.params.email;
     let sql_query = `Select * from user
@@ -20,7 +20,7 @@ app.get('/projects/:email', (request, response) => {
 
 
 // gives campaigns against projectid 
-app.get('/campaigns/:projectid', (request, response) => {
+app.get('/getCampaigns/:projectid', (request, response) => {
 
     const projectId = request.params.projectid;
     let sql_query = `SELECT * FROM campaigns where projectId="${projectId}"`

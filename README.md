@@ -25,8 +25,8 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Endpoints
 
-1. `GET /projects/{user_email}`
+1. `GET /getProjects/{user_email}`
 Repond the list of projects for the user's email given in the request.
 
-2. `GET /campaigns/{project_id}`
+2. `GET /getCampaigns/{project_id}` 
 Repond the list of campaigna for the projectID given in the request.
