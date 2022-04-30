@@ -22,3 +22,11 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Endpoints
+
+1. `GET /projects/{user_email}`
+Repond the list of projects for the user's email given in the request.
+
+2. `GET /campaigns/{project_id}`
+Repond the list of campaigna for the projectID given in the request.
