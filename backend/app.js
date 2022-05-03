@@ -1,40 +1,31 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 const port = 3000;
 const connection = require('./db');
 
-// gives you projects against email 
-app.get('/getProjects/:email', (request, response) => {
+// routes imports
+const registerRoute = require('./routes/register');
+const loginRoute = require('./routes/login');
+const projectsRoute = require('./routes/projects');
+const campaignsRoute = require('./routes/campaigns');
 
-    const email = request.params.email;
-    let sql_query = `Select * from user
-    JOIN projects ON user.userId = projects.userId
-    WHERE user.email="${email}"`
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-    connection.query(sql_query, function (err, results) {
-        if (err) throw err;
-        console.log('result ', results)
-        response.send(results);
-    });
-});
+// routes 
+app.use('/register', registerRoute);
+app.use('/login', loginRoute);
+app.use('/projects/:email', projectsRoute);
+app.use('/campaigns/:projectid', campaignsRoute);
 
-
-// gives campaigns against projectid 
-app.get('/getCampaigns/:projectid', (request, response) => {
-
-    const projectId = request.params.projectid;
-    let sql_query = `SELECT * FROM campaigns where projectId="${projectId}"`
-    connection.query(sql_query, function (err, results) {
-        if (err) throw err;
-        console.log('result ', results)
-        response.send(results);
-    });
-});
-
+// start server 
 app.listen(port, () => {
-    console.log(`Hello world app listening on port ${port}!`)
+    console.log(`Hello world app listening on port ${port}!`);
     connection.connect(function (err) {
         if (err) throw err;
         console.log('Database connected!');
-    })
-})
+    });
+});
+
+module.exports = app;
