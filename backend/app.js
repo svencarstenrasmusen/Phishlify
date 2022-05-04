@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = 3000;
 const connection = require('./db');
+const cors = require('cors');
 
 // routes imports
 const registerRoute = require('./routes/register');
@@ -12,8 +13,8 @@ const campaignsRoute = require('./routes/campaigns');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// routes 
+app.use(cors());
+// routes
 app.use('/register', registerRoute);
 app.use('/login', loginRoute);
 app.use('/projects/:email', projectsRoute);
