@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phishing_framework/data/dataprovider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key, required this.title}) : super(key: key);
@@ -24,8 +25,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   //KEYS
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
+  DataProvider dataProvider = DataProvider();
 
   bool termAgreement = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -34,23 +37,33 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       body: Container(
-        child: Center(
-            child: Row(
-              children: [
-                Container(
-                  height: height,
-                  width: width / 2,
-                  child: Center(child: registerForm()),
-                ),
-                Container(
-                  height: height,
-                  width: width / 2,
-                  color: const Color(0xFF0A150F),
-                  child: Image.asset("assets/images/loginImage.png",
-                      fit: BoxFit.fitHeight),
-                )
-              ],
-            )),
+        child: Stack(
+          children: [
+            Center(
+                child: Row(
+                  children: [
+                    Container(
+                      height: height,
+                      width: width / 2,
+                      child: Center(child: registerForm()),
+                    ),
+                    Container(
+                      height: height,
+                      width: width / 2,
+                      color: const Color(0xFF0A150F),
+                      child: Image.asset("assets/images/loginImage.png",
+                          fit: BoxFit.fitHeight),
+                    )
+                  ],
+                )),
+            isLoading
+                ? Container(
+              color: Colors.grey[200]!.withOpacity(0.75),
+              child: const Center(child: CircularProgressIndicator()),
+            )
+                : Container()
+          ],
+        )
       ),
     );
   }
@@ -197,7 +210,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Text("Create Account",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold)),
-                  onPressed: () => {print("Creating account...")},
+                  onPressed: () => {
+                    _registerUser(nameController.text, emailController.text, passwordController.text)
+                  },
                 ),
                 SizedBox(height: 25),
                 Row(
@@ -215,5 +230,69 @@ class _RegisterPageState extends State<RegisterPage> {
                 )
               ],
             )));
+  }
+
+  void _registerUser(String name, String email, String password) async {
+    _toggleLoading();
+    var result = await dataProvider.register(name, email, password);
+    if (result == 1) {
+      _toggleLoading();
+      //perform login...
+    } else if (result == 0) {
+      _toggleLoading();
+      _showUserAlreadyExistsDialog();
+    } else {
+      _toggleLoading();
+      _showRegisterErrorDialog();
+    }
+  }
+
+  void _toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
+
+  _showUserAlreadyExistsDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: const Text('You might already have an account!', textAlign: TextAlign.center),
+            contentPadding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+            children: [
+              const Text('An account with that name already exists!', textAlign: TextAlign.center),
+              MaterialButton(
+                child: const Text('Okay'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  _showRegisterErrorDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: const Text('Oops!', textAlign: TextAlign.center),
+            contentPadding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+            children: [
+              const Icon(Icons.error, color: Colors.orange, size: 100),
+              const Text('An error occured while trying to register.', textAlign: TextAlign.center),
+              MaterialButton(
+                child: const Text('Okay, try again!'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }
+    );
   }
 }
