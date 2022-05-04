@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
                 connection.query(sql_query, function (err, results) {
                     if (err) throw err;
                     console.log('result ', results)
-                    res.send("User Inserted!");
+                    res.send(results);
                 });
             } else {
                 res.send('Fields cannot be empty!')
