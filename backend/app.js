@@ -23,7 +23,10 @@ app.use('/campaigns/:projectid', campaignsRoute);
 app.listen(port, () => {
     console.log(`Hello world app listening on port ${port}!`);
     connection.connect(function (err) {
-        if (err) throw err;
+        if (err) {
+            console.log(err);
+            throw err;
+        }
         console.log('Database connected!');
     });
 });
