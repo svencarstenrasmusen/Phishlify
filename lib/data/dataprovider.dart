@@ -69,8 +69,8 @@ class DataProvider {
       "name": project.name,
       "personInCharge": project.personInCharge,
       "domain": project.domain,
-      "startDate": project.startDate,
-      "endDate": project.endDate,
+      "startDate": _formatDate(project.startDate),
+      "endDate": _formatDate(project.endDate),
       "language": project.language,
       "email": email
     };
@@ -84,5 +84,11 @@ class DataProvider {
       return false;
       //throw Exception('Error on creating project. Response: ${response.body}');
     }
+  }
+
+  ///Standard function to format the date to send a correctly structured date.
+  String _formatDate(DateTime? date) {
+    String dateString = "${date!.year}-${date.month}-${date.day}";
+    return dateString;
   }
 }

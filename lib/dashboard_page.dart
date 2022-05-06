@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/models.dart';
+import 'package:phishing_framework/projects_page.dart';
 
 class DashboardPage extends StatefulWidget {
   final String title;
@@ -85,6 +86,16 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       ),
       onPressed: () {
+        switch (routeName) {
+          case '/dashboard':
+            break;
+          case '/projects':
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProjectsPage(title: "Projects", user: widget.user)),
+            );
+        }
         Navigator.pushNamed(context, routeName);
       },
     );
