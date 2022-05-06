@@ -13,11 +13,11 @@ router.post('/', (req, res) => {
         console.log('result ', results.length)
         if (results.length > 0) {
             // login successful
-            res.send('200');
+            res.status(200).send(results);
         }
         else {
             // Credentials are not correct !
-            res.send('400') 
+            res.status(409).send('Credentials are not correct!') 
         }
     });
 });
