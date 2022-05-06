@@ -183,6 +183,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     if (value == null || value.trim().isEmpty) {
                       return "Please confirm your password.";
                     }
+                    if (passwordController.text != passwordConfirmController.text) {
+                      return "Password does not match.";
+                    }
                   },
                   textAlign: TextAlign.left,
                 ),
