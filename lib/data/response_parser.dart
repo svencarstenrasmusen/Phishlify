@@ -15,4 +15,18 @@ class ResponseParser {
       email: jsonUser['email'],
     );
   }
+
+  //PROJECT PARSER
+  Project parseProject(Map jsonProject) {
+    return Project(
+      id: jsonProject['id'],
+      userId: jsonProject['userId'],
+      name: jsonProject['name'],
+      personInCharge: jsonProject['personInCharge'],
+      domain: jsonProject['domain'],
+      startDate: jsonProject['startDate'],
+      endDate: jsonProject['endDate'],
+      language: jsonProject['language']
+    );
+  }
 }
