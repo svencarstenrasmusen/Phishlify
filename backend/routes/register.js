@@ -13,7 +13,7 @@ router.post('/', (req, res) => {
     connection.query(userExists, function (err, results) {
         if (err) throw err;
         if (results.length > 0) {
-            res.send('User Already Exists!')
+            res.send(409)
         }
         else {
             if(name !== '' && email !== '' && password !==''){
@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
                 connection.query(sql_query, function (err, results) {
                     if (err) throw err;
                     console.log('result ', results)
-                    res.send(results);
+                    res.status(200).send(results);
                 });
             } else {
                 res.send('Fields cannot be empty!')
