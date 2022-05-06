@@ -24,13 +24,17 @@ class ResponseParser {
       name: jsonProject['name'],
       personInCharge: jsonProject['personInCharge'],
       domain: jsonProject['domain'],
-      startDate: jsonProject['startDate'],
-      endDate: jsonProject['endDate'],
+      startDate: formatDate(jsonProject['startDate']),
+      endDate: formatDate(jsonProject['endDate']),
       language: jsonProject['language']
     );
   }
 
   List<Project> parseListOfProjects(List jsonList) {
     return jsonList.map((jsonProject) => parseProject(jsonProject)).toList();
+  }
+
+  DateTime formatDate(String dateString) {
+    return DateTime.parse(dateString);
   }
 }
