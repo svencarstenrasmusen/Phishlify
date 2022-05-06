@@ -132,14 +132,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
     );
   }
 
-  /**Widget projectsBox() {
-    return Container(
-        color: Colors.white,
-        child: Center(
-            child: Text(
-                "You currently have no projects. Create a project on the top right with the ${"Create New Project"} button.")));
-  }*/
-
   Widget projectsBox() {
     return Container(
       color: Colors.white,
