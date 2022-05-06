@@ -4,6 +4,7 @@ const connection = require('../db');
 
 router.post('/', (req, res) => {
     console.log('register 1 ', req.body);
+    const userId = req.body.userId;
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
@@ -13,15 +14,16 @@ router.post('/', (req, res) => {
     connection.query(userExists, function (err, results) {
         if (err) throw err;
         if (results.length > 0) {
-            res.send(409)
+            res.send(409);
         }
         else {
+            
             if(name !== '' && email !== '' && password !==''){
                 let sql_query = `INSERT INTO user (name, email, password)
                 VALUES ("${name}", "${email}", ${password})`;
                 connection.query(sql_query, function (err, results) {
                     if (err) throw err;
-                    console.log('result ', results)
+                    console.log('result ', results);
                     res.status(200).send(results);
                 });
             } else {
