@@ -12,10 +12,12 @@ router.post('/', (req, res) => {
         if (err) throw err;
         console.log('result ', results.length)
         if (results.length > 0) {
-            res.send(results);
+            // login successful
+            res.send('200');
         }
         else {
-            res.send('Credentials are not correct !')
+            // Credentials are not correct !
+            res.send('400') 
         }
     });
 });
