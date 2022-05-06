@@ -128,6 +128,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           borderSide: BorderSide(color: Colors.red, width: 5))),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
+                      return "Please enter an email address.";
+                    }
+                    if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
                       return "Please enter a valid email address.";
                     }
                   },
@@ -215,7 +218,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold)),
                   onPressed: () => {
-                    _registerUser(nameController.text, emailController.text, passwordController.text)
+                    if (_registerFormKey.currentState!.validate()) {
+                      _registerUser(nameController.text, emailController.text, passwordController.text)
+                    }
                   },
                 ),
                 SizedBox(height: 25),
@@ -250,7 +255,6 @@ class _RegisterPageState extends State<RegisterPage> {
       _showRegisterErrorDialog();
     }
   }
-
 
   _login(String email, String password) async {
     _toggleLoading();
