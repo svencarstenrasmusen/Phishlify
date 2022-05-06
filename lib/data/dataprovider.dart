@@ -63,4 +63,26 @@ class DataProvider {
       throw Exception('Unknown error occurred during login.');
     }
   }
+
+  Future<bool> createProject(Project project, String email) async {
+    var body = {
+      "name": project.name,
+      "personInCharge": project.personInCharge,
+      "domain": project.domain,
+      "startDate": project.startDate,
+      "endDate": project.endDate,
+      "language": project.language,
+      "email": email
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/projects/create/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on creating project. Response: ${response.body}');
+    }
+  }
 }
