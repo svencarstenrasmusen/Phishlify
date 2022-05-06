@@ -86,6 +86,16 @@ class DataProvider {
     }
   }
 
+  Future<List<Project>> getProjects(String email) async {
+    final response = await http.get(kBaseUrl.replace(path: '/projects/$email'), headers: headers);
+
+    if (response.statusCode == 200) {
+      return parser.parseListOfProjects(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load all projects');
+    }
+  }
+
   ///Standard function to format the date to send a correctly structured date.
   String _formatDate(DateTime? date) {
     String dateString = "${date!.year}-${date.month}-${date.day}";
