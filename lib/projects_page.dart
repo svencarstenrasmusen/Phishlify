@@ -28,6 +28,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   bool isLoading = false;
   Project? project;
   DataProvider dataProvider = DataProvider();
+  List<Project>? projectList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -131,12 +132,37 @@ class _ProjectsPageState extends State<ProjectsPage> {
     );
   }
 
-  Widget projectsBox() {
+  /**Widget projectsBox() {
     return Container(
         color: Colors.white,
         child: Center(
             child: Text(
                 "You currently have no projects. Create a project on the top right with the ${"Create New Project"} button.")));
+  }*/
+
+  Widget projectsBox() {
+    return Container(
+      color: Colors.white,
+      child: FutureBuilder<List<Project>>(
+        future: dataProvider.getProjects(widget.user.email!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            projectList = snapshot.data;
+            return ListView.builder(
+              itemCount: projectList!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(projectList![index].name!),
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'));
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
   }
 
   Widget menuBar() {
@@ -338,10 +364,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
               MaterialButton(
                 onPressed: () {
                   _setProject();
+                  _createProject();
                   setState(() {
                     createProject = false;
                   });
-                  _createProject();
                 },
                 elevation: 0,
                 height: 50,
