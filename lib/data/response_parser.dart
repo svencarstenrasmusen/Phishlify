@@ -10,7 +10,7 @@ class ResponseParser {
   //USER PARSER
   User parseUser(Map jsonUser) {
     return User(
-      id: jsonUser['id'],
+      id: jsonUser['userId'],
       name: jsonUser['name'],
       email: jsonUser['email'],
     );

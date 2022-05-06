@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:phishing_framework/dashboard_page.dart';
 import 'package:phishing_framework/register_page.dart';
 import 'package:phishing_framework/projects_page.dart';
+import 'package:phishing_framework/data/dataprovider.dart';
+import 'package:phishing_framework/data/models.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +24,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginPage(title: "Login Page"),
         '/register': (context) => const RegisterPage(title: "Register Page"),
-        '/dashboard': (context) => const DashboardPage(title: "Dashboard Page"),
         '/projects': (context) => const ProjectsPage(title: "Projects Page"),
       },
     );
@@ -48,8 +49,12 @@ class _LoginPageState extends State<LoginPage> {
 
   //KEYS
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+  DataProvider dataProvider = DataProvider();
 
   bool rememberMe = false;
+  bool isLoading = false;
+
+  User? user;
 
   @override
   Widget build(BuildContext context) {
@@ -57,25 +62,35 @@ class _LoginPageState extends State<LoginPage> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Container(
-        child: Center(
-            child: Row(
-            children: [
-              Container(
-                height: height,
-                width: width / 2,
-                child: Center(child: loginForm()),
-              ),
-              Container(
-                height: height,
-                width: width / 2,
-                color: const Color(0xFF0A150F),
-                child: Image.asset("assets/images/loginImage.png",
-                    fit: BoxFit.fitHeight),
-              )
-            ],
-        )),
-      ),
+      body: Stack(
+        children: [
+          Container(
+            child: Center(
+                child: Row(
+                  children: [
+                    Container(
+                      height: height,
+                      width: width / 2,
+                      child: Center(child: loginForm()),
+                    ),
+                    Container(
+                      height: height,
+                      width: width / 2,
+                      color: const Color(0xFF0A150F),
+                      child: Image.asset("assets/images/loginImage.png",
+                          fit: BoxFit.fitHeight),
+                    )
+                  ],
+                )),
+          ),
+          isLoading
+              ? Container(
+            color: Colors.grey[200]!.withOpacity(0.75),
+            child: const Center(child: CircularProgressIndicator()),
+          )
+              : Container()
+        ],
+      )
     );
   }
 
@@ -178,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold)),
                   onPressed: () {
-                    Navigator.pushNamed(context, '/dashboard');
+                    _login(emailController.text, passwordController.text);
                   },
                 ),
                 SizedBox(height: 25),
@@ -196,5 +211,49 @@ class _LoginPageState extends State<LoginPage> {
                 )
               ],
             )));
+  }
+
+  _login(String email, String password) async {
+    _toggleLoading();
+    try {
+      user = await dataProvider.login(email, password);
+      _toggleLoading();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => DashboardPage(title: "Dashboard", user: user!)),
+      );
+    } catch (e) {
+      _toggleLoading();
+      _showErrorDialog();
+    }
+  }
+
+  void _toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
+
+  _showErrorDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: const Text('Oops!', textAlign: TextAlign.center),
+            contentPadding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+            children: [
+              const Icon(Icons.error, color: Colors.orange, size: 100),
+              const Text('An error occured while trying to login.', textAlign: TextAlign.center),
+              MaterialButton(
+                child: const Text('Okay, try again!'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }
+    );
   }
 }
