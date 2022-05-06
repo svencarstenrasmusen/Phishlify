@@ -4,7 +4,6 @@ const connection = require('../db');
 
 router.post('/', (req, res) => {
     console.log('register 1 ', req.body);
-    const userId = req.body.userId;
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
