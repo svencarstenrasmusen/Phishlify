@@ -29,4 +29,8 @@ class ResponseParser {
       language: jsonProject['language']
     );
   }
+
+  List<Project> parseListOfProjects(List jsonList) {
+    return jsonList.map((jsonProject) => parseProject(jsonProject)).toList();
+  }
 }
