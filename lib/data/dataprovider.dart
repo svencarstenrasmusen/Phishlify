@@ -9,7 +9,7 @@ import 'package:phishing_framework/data/models.dart';
 class DataProvider {
   ResponseParser parser = ResponseParser();
 
-  static final String kHost = '127.0.0.1:3000';
+  static final String kHost = '192.168.0.199:3000';
   static final String kBasePath = '/';
   
   //TODO: change to secure channel HTTPS!
@@ -40,7 +40,65 @@ class DataProvider {
       }
     } catch (e) {
       throw Exception('Failed to register user:\n$e');
-      return -1;
     }
+  }
+
+  Future<User> login(String email, String password) async {
+    var body = {
+      "email": email,
+      "password": password
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/login/'), headers: headers, body: jsonBody);
+    if (response.statusCode == 409) {
+      throw Exception('Credentials are not correct!');
+    } else if (response.statusCode == 200) {
+      try {
+        return parser.parseUser(jsonDecode(response.body)[0]);
+      } catch (e) {
+        throw Exception('Failed to parse user.\nError: $e');
+      }
+    } else {
+      throw Exception('Unknown error occurred during login.');
+    }
+  }
+
+  Future<bool> createProject(Project project, String email) async {
+    var body = {
+      "name": project.name,
+      "personInCharge": project.personInCharge,
+      "domain": project.domain,
+      "startDate": _formatDate(project.startDate),
+      "endDate": _formatDate(project.endDate),
+      "language": project.language,
+      "email": email
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/projects/create/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on creating project. Response: ${response.body}');
+    }
+  }
+
+  Future<List<Project>> getProjects(String email) async {
+    final response = await http.get(kBaseUrl.replace(path: '/projects/$email'), headers: headers);
+
+    if (response.statusCode == 200) {
+      return parser.parseListOfProjects(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load all projects');
+    }
+  }
+
+  ///Standard function to format the date to send a correctly structured date.
+  String _formatDate(DateTime? date) {
+    String dateString = "${date!.year}-${date.month}-${date.day}";
+    return dateString;
   }
 }

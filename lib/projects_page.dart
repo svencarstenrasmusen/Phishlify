@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:phishing_framework/data/models.dart';
+import 'package:phishing_framework/data/dataprovider.dart';
 
 class ProjectsPage extends StatefulWidget {
-  const ProjectsPage({Key? key, required this.title}) : super(key: key);
   final String title;
+  final User user;
+  const ProjectsPage({Key? key, required this.title, required this.user}) : super(key: key);
 
   @override
   State<ProjectsPage> createState() => _ProjectsPageState();
@@ -21,6 +24,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   //KEYS
   final GlobalKey<FormState> _createProjectKey = GlobalKey<FormState>();
+
+  bool isLoading = false;
+  Project? project;
+  DataProvider dataProvider = DataProvider();
+  List<Project>? projectList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -126,10 +134,27 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   Widget projectsBox() {
     return Container(
-        color: Colors.white,
-        child: Center(
-            child: Text(
-                "You currently have no projects. Create a project on the top right with the ${"Create New Project"} button.")));
+      color: Colors.white,
+      child: FutureBuilder<List<Project>>(
+        future: dataProvider.getProjects(widget.user.email!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            projectList = snapshot.data;
+            return ListView.builder(
+              itemCount: projectList!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(projectList![index].name!),
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'));
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
   }
 
   Widget menuBar() {
@@ -283,7 +308,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             child: TextFormField(
                               controller: startDateController,
                               decoration: const InputDecoration(
-                                  labelText: "Enter a start date. Format DD/MM/YYYY.",
+                                  labelText: "Enter a start date. Format YYYY-MM-DD.",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(Radius.circular(7))),
                                   errorBorder: OutlineInputBorder(
@@ -309,7 +334,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             child: TextFormField(
                               controller: endDateController,
                               decoration: const InputDecoration(
-                                  labelText: "Enter a end date. Format DD/MM/YYYY.",
+                                  labelText: "Enter a end date. Format YYYY-MM-DD.",
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(Radius.circular(7))),
                                   errorBorder: OutlineInputBorder(
@@ -330,6 +355,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
               ),
               MaterialButton(
                 onPressed: () {
+                  _setProject();
+                  _createProject();
                   setState(() {
                     createProject = false;
                   });
@@ -343,6 +370,29 @@ class _ProjectsPageState extends State<ProjectsPage> {
           ),
         ),
       ),
+    );
+  }
+
+  _createProject() async {
+    _toggleLoading();
+    await dataProvider.createProject(project!, widget.user.email!);
+    _toggleLoading();
+  }
+
+  void _toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
+
+  _setProject() {
+    project = Project(
+      name: projectNameController.text,
+      domain: domainController.text,
+      startDate: DateTime.parse(startDateController.text),
+      endDate: DateTime.parse(endDateController.text),
+      language: selectedLanguage,
+      personInCharge: widget.user.name
     );
   }
 

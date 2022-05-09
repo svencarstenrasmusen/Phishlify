@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
+import 'package:phishing_framework/data/models.dart';
+import 'package:phishing_framework/dashboard_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key, required this.title}) : super(key: key);
@@ -29,6 +31,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool termAgreement = false;
   bool isLoading = false;
+
+  User? user;
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +128,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           borderSide: BorderSide(color: Colors.red, width: 5))),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
+                      return "Please enter an email address.";
+                    }
+                    if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
                       return "Please enter a valid email address.";
                     }
                   },
@@ -176,6 +183,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     if (value == null || value.trim().isEmpty) {
                       return "Please confirm your password.";
                     }
+                    if (passwordController.text != passwordConfirmController.text) {
+                      return "Password does not match.";
+                    }
                   },
                   textAlign: TextAlign.left,
                 ),
@@ -211,7 +221,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold)),
                   onPressed: () => {
-                    _registerUser(nameController.text, emailController.text, passwordController.text)
+                    if (_registerFormKey.currentState!.validate()) {
+                      _registerUser(nameController.text, emailController.text, passwordController.text)
+                    }
                   },
                 ),
                 SizedBox(height: 25),
@@ -237,13 +249,29 @@ class _RegisterPageState extends State<RegisterPage> {
     var result = await dataProvider.register(name, email, password);
     if (result == 1) {
       _toggleLoading();
-      //perform login...
+      _login(email, password);
     } else if (result == 0) {
       _toggleLoading();
       _showUserAlreadyExistsDialog();
     } else {
       _toggleLoading();
       _showRegisterErrorDialog();
+    }
+  }
+
+  _login(String email, String password) async {
+    _toggleLoading();
+    try {
+      user = await dataProvider.login(email, password);
+      _toggleLoading();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => DashboardPage(title: "Dashboard", user: user!)),
+      );
+    } catch (e) {
+      _toggleLoading();
+      _showLoginErrorDialog();
     }
   }
 
@@ -284,6 +312,28 @@ class _RegisterPageState extends State<RegisterPage> {
             children: [
               const Icon(Icons.error, color: Colors.orange, size: 100),
               const Text('An error occured while trying to register.', textAlign: TextAlign.center),
+              MaterialButton(
+                child: const Text('Okay, try again!'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  _showLoginErrorDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: const Text('Oops!', textAlign: TextAlign.center),
+            contentPadding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 12.0),
+            children: [
+              const Icon(Icons.error, color: Colors.orange, size: 100),
+              const Text('An error occured while trying to login.', textAlign: TextAlign.center),
               MaterialButton(
                 child: const Text('Okay, try again!'),
                 onPressed: () {

@@ -8,14 +8,14 @@ router.get('/', (req, res) => {
     console.log('projects route ',req.params)
 
     const email = req.params.email;
-    let sql_query = `Select * from user
+    let sql_query = `SELECT * FROM user
     JOIN projects ON user.userId = projects.userId
     WHERE user.email="${email}"`
 
     connection.query(sql_query, function (err, results) {
         if (err) throw err;
         console.log('result ', results)
-        response.send(results);
+        res.status(200).send(results);
     });
 });
 

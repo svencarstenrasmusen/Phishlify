@@ -24,7 +24,17 @@ router.post('/', (req, res) => {
         userId = resId[0].userId;
         create_project_query = `INSERT INTO projects (name, personInCharge, domain, startDate, endDate, userId, language)
         VALUES ("${name}", "${personInCharge}", "${domain}", "${startDate}", "${endDate}", "${userId}", "${language}")`;
-        
+
+    userid_sql_query = `SELECT userId from user WHERE email = "${email}"`;
+
+    connection.query(userid_sql_query, function (err, resId) {
+        if (err) throw err;
+        console.log('resId ', resId);
+
+        userId = resId[0].userId;
+        create_project_query = `INSERT INTO projects (name, personInCharge, domain, startDate, endDate, userId, language)
+        VALUES ("${name}", "${personInCharge}", "${domain}", "${startDate}", "${endDate}", "${userId}", "${language}")`;
+
         connection.query(create_project_query, function (err, results) {
             if (err) throw err;
             console.log('results ', results);
@@ -34,4 +44,5 @@ router.post('/', (req, res) => {
 
 });
 
+});
 module.exports = router;
