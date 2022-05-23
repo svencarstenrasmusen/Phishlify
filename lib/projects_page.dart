@@ -18,6 +18,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   //CONTROLLERS
   TextEditingController projectNameController = TextEditingController();
+  TextEditingController personInChargeController = TextEditingController();
   TextEditingController customerController = TextEditingController();
   TextEditingController domainController = TextEditingController();
   TextEditingController startDateController = TextEditingController();
@@ -30,6 +31,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
   Project? project;
   DataProvider dataProvider = DataProvider();
   List<Project>? projectList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    personInChargeController.text = widget.user.name!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -287,6 +294,30 @@ class _ProjectsPageState extends State<ProjectsPage> {
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return "Please enter a project name.";
+                    }
+                  },
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Text("Person In Charge", style: TextStyle(fontSize: 15, color: Colors.grey)),
+              ),
+              SizedBox(height: 5),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: TextFormField(
+                  controller: personInChargeController,
+                  decoration: const InputDecoration(
+                      labelText: "Enter the person in charge of the project",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7))),
+                      errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 5))),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter the person in charge.";
                     }
                   },
                   textAlign: TextAlign.left,
