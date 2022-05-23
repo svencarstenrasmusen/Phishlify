@@ -20,6 +20,35 @@ class _ProjectTileState extends State<ProjectTile> {
               width: 2,
               color: Colors.grey
             ),
-            borderRadius: BorderRadius.circular(5)));
+            borderRadius: BorderRadius.circular(5)),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Icon(Icons.folder_outlined, size: 50)
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                color: Colors.grey,
+                child: Column(
+                  children: [
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
+                      child: Row(children: [Text("${widget.project.name}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))],),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      child: Row(children: [Text("${widget.project.domain}", style: TextStyle(fontSize: 12))],),
+                    ),
+                    Spacer(flex: 2),
+                  ],
+                ),
+              )
+            )
+          ],
+        )
+    );
   }
 }
