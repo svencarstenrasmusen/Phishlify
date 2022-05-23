@@ -83,7 +83,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
           child: Icon(Icons.person),
         ),
         SizedBox(width: 10),
-        Text("Max Mustermann",
+        Text("${widget.user.name}",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))
       ],
     );
