@@ -287,6 +287,15 @@ class _ProjectsPageState extends State<ProjectsPage> {
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Text("Language", style: TextStyle(fontSize: 15, color: Colors.grey)),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: selectLanguageMenu()
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Text("Customer", style: TextStyle(fontSize: 15, color: Colors.grey)),
               ),
               SizedBox(height: 5),
@@ -468,6 +477,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   Widget selectLanguageMenu() {
     return Container(
       child: DropdownButton(
+        isExpanded: true,
         hint: Text("Select Language"),
         value: selectedLanguage,
         onChanged: (String? selected) {
