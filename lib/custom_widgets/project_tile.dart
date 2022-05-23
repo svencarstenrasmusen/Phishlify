@@ -39,10 +39,14 @@ class _ProjectTileState extends State<ProjectTile> {
                       child: Row(children: [Text("${widget.project.name}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))],),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
                       child: Row(children: [Text("${widget.project.domain}", style: TextStyle(fontSize: 12))],),
                     ),
-                    Spacer(flex: 2),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      child: Row(children: [Text("${widget.project.formattedStartDate()} - ${widget.project.formattedEndDate()}", style: TextStyle(fontSize: 12))],),
+                    ),
+                    Spacer(),
                   ],
                 ),
               )
