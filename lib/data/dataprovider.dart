@@ -9,7 +9,8 @@ import 'package:phishing_framework/data/models.dart';
 class DataProvider {
   ResponseParser parser = ResponseParser();
 
-  static final String kHost = '127.0.0.1:3000';
+  //static final String kHost = '127.0.0.1:3000';
+  static final String kHost = '172.25.7.152:3000'; //for emulator
   static final String kBasePath = '/';
   
   //TODO: change to secure channel HTTPS!
