@@ -59,7 +59,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             titleWidget(),
                             SizedBox(height: 30),
                             createProject
-                                ? Expanded(child: contractCreationForm())
+                                ? Expanded(child: projectCreationForm())
                                 : Expanded(child: projectsBox())
                           ],
                         ),
@@ -218,7 +218,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     );
   }
 
-  Widget contractCreationForm() {
+  Widget projectCreationForm() {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
       color: Colors.white,
