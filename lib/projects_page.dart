@@ -75,7 +75,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
               ? Row(
                   children: [
                     Expanded(child: dismissFormWidget()),
-                    projectCreationForm(width / 3)
+                    projectCreationForm(width / 2.5)
                   ],
                 )
               : Container()
@@ -243,7 +243,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   Widget projectCreationForm(double width) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       color: Colors.white,
       child: Form(
         key: _createProjectKey,
@@ -253,36 +253,45 @@ class _ProjectsPageState extends State<ProjectsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Create New Project", style: TextStyle(fontSize: 20)),
-              SizedBox(height: 20),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  selectLanguageMenu(),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: projectNameController,
-                      decoration: const InputDecoration(
-                          labelText: "Enter a project name",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(7))),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red, width: 5))),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return "Please enter a project name.";
-                        }
-                      },
-                      textAlign: TextAlign.left,
-                    ),
-                  )
-                ],
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Text("Create New Project", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
               SizedBox(height: 10),
-              Text("Customer", style: TextStyle(fontSize: 20)),
+              Divider(thickness: 1, color: Colors.grey),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Text("Project Name", style: TextStyle(fontSize: 15, color: Colors.grey)),
+              ),
               SizedBox(height: 5),
-              Expanded(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: TextFormField(
+                  controller: projectNameController,
+                  decoration: const InputDecoration(
+                      labelText: "Enter a project name",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7))),
+                      errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 5))),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter a project name.";
+                    }
+                  },
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Text("Customer", style: TextStyle(fontSize: 15, color: Colors.grey)),
+              ),
+              SizedBox(height: 5),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: TextFormField(
                   controller: customerController,
                   decoration: const InputDecoration(
@@ -300,9 +309,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 ),
               ),
               SizedBox(height: 10),
-              Text("Domain", style: TextStyle(fontSize: 20)),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Text("Domain", style: TextStyle(fontSize: 15, color: Colors.grey)),
+              ),
               SizedBox(height: 5),
-              Expanded(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: TextFormField(
                   controller: domainController,
                   decoration: const InputDecoration(
@@ -320,74 +333,107 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 ),
               ),
               Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Start Date", style: TextStyle(fontSize: 15, color: Colors.grey)),
+                            SizedBox(height: 5),
+                            Expanded(
+                              child: TextFormField(
+                                controller: startDateController,
+                                decoration: const InputDecoration(
+                                    labelText: "Enter a start date. Format YYYY-MM-DD.",
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(7))),
+                                    errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.red, width: 5))),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Please enter a start date.";
+                                  }
+                                },
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("End Date", style: TextStyle(fontSize: 15, color: Colors.grey)),
+                            SizedBox(height: 5),
+                            Expanded(
+                              child: TextFormField(
+                                controller: endDateController,
+                                decoration: const InputDecoration(
+                                    labelText: "Enter a end date. Format YYYY-MM-DD.",
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(7))),
+                                    errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.red, width: 5))),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return "Please enter a end date.";
+                                  }
+                                },
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
                   children: [
                     Expanded(
-                      child: Column(
-                        children: [
-                          Text("Start Date", style: TextStyle(fontSize: 20)),
-                          SizedBox(height: 5),
-                          Expanded(
-                            child: TextFormField(
-                              controller: startDateController,
-                              decoration: const InputDecoration(
-                                  labelText: "Enter a start date. Format YYYY-MM-DD.",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(7))),
-                                  errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red, width: 5))),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return "Please enter a start date.";
-                                }
-                              },
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ],
+                      flex: 3,
+                      child: MaterialButton(
+                        onPressed: () {
+                          _setProject();
+                          _createProject();
+                          setState(() {
+                            createProject = false;
+                          });
+                        },
+                        elevation: 0,
+                        height: 50,
+                        color: Colors.lightGreenAccent,
+                        child: Text("Create Project", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    Spacer(),
                     Expanded(
-                      child: Column(
-                        children: [
-                          Text("End Date", style: TextStyle(fontSize: 20)),
-                          SizedBox(height: 5),
-                          Expanded(
-                            child: TextFormField(
-                              controller: endDateController,
-                              decoration: const InputDecoration(
-                                  labelText: "Enter a end date. Format YYYY-MM-DD.",
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(7))),
-                                  errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red, width: 5))),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return "Please enter a end date.";
-                                }
-                              },
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ],
+                      flex: 2,
+                      child: MaterialButton(
+                        onPressed: () {
+                          setState(() {
+                            createProject = false;
+                          });
+                        },
+                        elevation: 0,
+                        height: 50,
+                        color: Colors.grey[300],
+                        child: Text("Cancel", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                       ),
                     ),
+                    Spacer(flex: 4)
                   ],
                 ),
-              ),
-              MaterialButton(
-                onPressed: () {
-                  _setProject();
-                  _createProject();
-                  setState(() {
-                    createProject = false;
-                  });
-                },
-                elevation: 0,
-                height: 50,
-                color: Colors.lightGreenAccent,
-                child: Text("Create", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
