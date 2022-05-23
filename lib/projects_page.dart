@@ -40,37 +40,47 @@ class _ProjectsPageState extends State<ProjectsPage> {
         color: Colors.grey[200],
         height: height,
         width: width,
-        child: Row(
+        child: Stack(
           children: [
-            menuBar(),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: Column(
+            Row(
+              children: [
+                menuBar(),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Column(
+                      children: [
+                        userAvatar(),
+                        SizedBox(height: 10),
+                        Divider(thickness: 1, color: Colors.grey),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                            child: Column(
+                              children: [
+                                titleWidget(),
+                                SizedBox(height: 30),
+                                Expanded(child: projectsBox())
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+            createProject
+              ? Row(
                   children: [
-                    userAvatar(),
-                    SizedBox(height: 10),
-                    Divider(thickness: 1, color: Colors.grey),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                        child: Column(
-                          children: [
-                            titleWidget(),
-                            SizedBox(height: 30),
-                            createProject
-                                ? Expanded(child: projectCreationForm())
-                                : Expanded(child: projectsBox())
-                          ],
-                        ),
-                      ),
-                    )
+                    Expanded(child: dismissFormWidget()),
+                    projectCreationForm(width / 3)
                   ],
-                ),
-              ),
-            )
+                )
+              : Container()
           ],
-        ),
+        )
       ),
     );
   }
@@ -218,14 +228,27 @@ class _ProjectsPageState extends State<ProjectsPage> {
     );
   }
 
-  Widget projectCreationForm() {
+  Widget dismissFormWidget() {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          createProject = false;
+        });
+      },
+      child: Container(
+        color: Colors.grey[200]!.withOpacity(0.5),
+      ),
+    );
+  }
+
+  Widget projectCreationForm(double width) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
       color: Colors.white,
       child: Form(
         key: _createProjectKey,
         child: SizedBox(
-          width: 700,
+          width: width,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
