@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
+import 'package:phishing_framework/custom_widgets/project_tile.dart';
 
 class ProjectsPage extends StatefulWidget {
   final String title;
@@ -145,17 +146,24 @@ class _ProjectsPageState extends State<ProjectsPage> {
   Widget projectsBox() {
     return Container(
       color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: FutureBuilder<List<Project>>(
         future: dataProvider.getProjects(widget.user.email!),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             projectList = snapshot.data;
-            return ListView.builder(
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
               itemCount: projectList!.length,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
+                /**return ListTile(
                   title: Text(projectList![index].name!),
-                );
+                );*/
+                return ProjectTile(project: projectList![index]);
               },
             );
           } else if (snapshot.hasError) {
