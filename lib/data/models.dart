@@ -28,4 +28,14 @@ class Project {
   String toString() {
     return '$id, $name, $domain';
   }
+
+  String formattedStartDate() {
+    String dateString = "${startDate!.day}.${startDate!.month}.${startDate!.year}";
+    return dateString;
+  }
+
+  String formattedEndDate() {
+    String dateString = "${endDate!.day}.${endDate!.month}.${endDate!.year}";
+    return dateString;
+  }
 }
