@@ -18,7 +18,7 @@ class _ProjectTileState extends State<ProjectTile> {
             color: Colors.white,
             border: Border.all(
               width: 2,
-              color: Colors.grey
+              color: Colors.grey[300]!
             ),
             borderRadius: BorderRadius.circular(5)),
         child: Column(
@@ -30,7 +30,7 @@ class _ProjectTileState extends State<ProjectTile> {
             Expanded(
               flex: 1,
               child: Container(
-                color: Colors.grey,
+                color: Colors.grey[300]!,
                 child: Column(
                   children: [
                     Spacer(),
