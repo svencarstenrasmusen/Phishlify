@@ -380,6 +380,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                   textAlign: TextAlign.left,
                 ),
               ),
+              SizedBox(height: 10),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
