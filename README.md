@@ -7,7 +7,7 @@ Link: https://svencarstenrasmusen.github.io/Phishlify/build/web/index.html#/
 ## Project Links:
 Concept Paper Link: https://docs.google.com/document/d/1A1YGltLxfhI7H0cj7bWgdUoDfFdNGlzI/edit?usp=sharing&ouid=105825795590420324980&rtpof=true&sd=true
 
-Kanban Link: https://trello.com/invite/b/xvFFSFnw/ee2fd24519b6886ddaf4c5433c849c0d/kanban-board
+Kanban Link: https://trello.com/b/vQuzWSz9/phishlify
 
 
 ## Getting Started
