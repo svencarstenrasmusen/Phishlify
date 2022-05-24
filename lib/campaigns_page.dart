@@ -21,7 +21,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   bool createCampaign = false;
   DataProvider dataProvider = DataProvider();
-  List<Campaign> campaignsList = [];
+  List<Campaign>? campaignsList = [];
   List<Project>? projectList = [];
 
   //CONTROLLERS
@@ -96,20 +96,20 @@ class _CampaignsPageState extends State<CampaignsPage> {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: FutureBuilder<List<Project>>(
-        future: dataProvider.getProjects(widget.user.email!),
+      child: FutureBuilder<List<Campaign>>(
+        future: dataProvider.getCampaigns(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            projectList = snapshot.data;
+            campaignsList = snapshot.data;
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: projectList!.length,
+              itemCount: campaignsList!.length,
               itemBuilder: (BuildContext context, int index) {
-                return CampaignTile(campaign: projectList![index]);
+                return CampaignTile(campaign: campaignsList![index]);
               },
             );
           } else if (snapshot.hasError) {
