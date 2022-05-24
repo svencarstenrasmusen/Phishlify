@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/models.dart';
 
 class CampaignTile extends StatefulWidget {
-  final Project campaign;
+  final Campaign campaign;
 
   CampaignTile({required this.campaign});
 
