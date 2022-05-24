@@ -42,11 +42,17 @@ class Project {
 
 class Campaign {
   int? id;
+  int? projectId;
+  String? name;
+  String? domain;
+  String? description;
+  DateTime? startDate;
+  DateTime? endDate;
 
-  Campaign({this.id});
+  Campaign({this.id, this.projectId, this.name, this.domain, this.description, this.startDate, this.endDate});
 
   @override
   String toString() {
-    return '$id';
+    return 'Campaign: $id, $name, $domain';
   }
 }
