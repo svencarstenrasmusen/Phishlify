@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
-import 'package:phishing_framework/custom_widgets/project_tile.dart';
+import 'package:phishing_framework/custom_widgets/campaign_tile.dart';
 
 import 'dashboard_page.dart';
 import 'projects_page.dart';
@@ -109,7 +109,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               ),
               itemCount: projectList!.length,
               itemBuilder: (BuildContext context, int index) {
-                return ProjectTile(project: projectList![index]);
+                return CampaignTile(campaign: projectList![index]);
               },
             );
           } else if (snapshot.hasError) {
