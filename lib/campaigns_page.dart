@@ -26,9 +26,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   //CONTROLLERS
   TextEditingController campaignNameController = TextEditingController();
-  TextEditingController emailTemplateController = TextEditingController();
-  TextEditingController landingPageController = TextEditingController();
-  TextEditingController urlController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController domainController = TextEditingController();
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
 
@@ -43,6 +42,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
           color: Colors.grey[200],
           height: height,
@@ -67,7 +67,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                 children: [
                                   titleWidget(),
                                   SizedBox(height: 30),
-                                  Expanded(child: projectsBox())
+                                  Expanded(child: campaignsBox())
                                 ],
                               ),
                             ),
@@ -92,7 +92,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
-  Widget projectsBox() {
+  Widget campaignsBox() {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -243,7 +243,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: TextFormField(
-                  controller: urlController,
+                  controller: domainController,
                   decoration: const InputDecoration(
                       labelText: "Enter a domain name",
                       border: OutlineInputBorder(
@@ -253,6 +253,30 @@ class _CampaignsPageState extends State<CampaignsPage> {
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return "Please enter a domain name.";
+                    }
+                  },
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Text("Description", style: TextStyle(fontSize: 15, color: Colors.grey)),
+              ),
+              SizedBox(height: 5),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: TextFormField(
+                  controller: domainController,
+                  decoration: const InputDecoration(
+                      labelText: "Enter a description of the campaign",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7))),
+                      errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 5))),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter a description.";
                     }
                   },
                   textAlign: TextAlign.left,
