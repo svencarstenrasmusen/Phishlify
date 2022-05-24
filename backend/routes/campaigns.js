@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
 
     console.log('all campaigns route ', req.params)
 
-    let sql_query = `SELECT * FROM campaigns"`
+    let sql_query = `SELECT * FROM campaigns`
 
     connection.query(sql_query, function (err, results) {
         if (err) throw err;
