@@ -34,6 +34,23 @@ class ResponseParser {
     return jsonList.map((jsonProject) => parseProject(jsonProject)).toList();
   }
 
+  //CAMPAIGN PARSER
+  Campaign parseCampaign(Map jsonCampaign) {
+    return Campaign(
+        id: jsonCampaign['campaignId'],
+        projectId: jsonCampaign['projectId'],
+        name: jsonCampaign['name'],
+        domain: jsonCampaign['domain'],
+        startDate: formatDate(jsonCampaign['startDate']),
+        endDate: formatDate(jsonCampaign['endDate']),
+        description: jsonCampaign['description']
+    );
+  }
+
+  List<Campaign> parseListOfCampaigns(List jsonList) {
+    return jsonList.map((jsonCampaign) => parseCampaign(jsonCampaign)).toList();
+  }
+
   DateTime formatDate(String dateString) {
     return DateTime.parse(dateString);
   }

@@ -10,7 +10,7 @@ class DataProvider {
   ResponseParser parser = ResponseParser();
 
   //static final String kHost = '127.0.0.1:3000';
-  static final String kHost = '172.25.7.152:3000'; //for emulator
+  static final String kHost = '192.168.0.199:3000'; //for pc to laptop
   static final String kBasePath = '/';
   
   //TODO: change to secure channel HTTPS!
@@ -87,11 +87,42 @@ class DataProvider {
     }
   }
 
+  Future<bool> createCampaign(Campaign campaign) async {
+    var body = {
+      "name": campaign.name,
+      "projectId": campaign.id,
+      "domain": campaign.domain,
+      "startDate": _formatDate(campaign.startDate),
+      "endDate": _formatDate(campaign.endDate),
+      "description": campaign.description
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/campaigns/create/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on creating campaign. Response: ${response.body}');
+    }
+  }
+
   Future<List<Project>> getProjects(String email) async {
     final response = await http.get(kBaseUrl.replace(path: '/projects/$email'), headers: headers);
 
     if (response.statusCode == 200) {
       return parser.parseListOfProjects(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load all projects');
+    }
+  }
+
+  Future<List<Campaign>> getCampaigns() async {
+    final response = await http.get(kBaseUrl.replace(path: '/campaigns/all'), headers: headers);
+
+    if (response.statusCode == 200) {
+      return parser.parseListOfCampaigns(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load all projects');
     }

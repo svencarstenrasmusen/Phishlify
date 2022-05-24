@@ -21,21 +21,22 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   bool createCampaign = false;
   DataProvider dataProvider = DataProvider();
-  List<Campaign> campaignsList = [];
+  List<Campaign>? campaignsList = [];
   List<Project>? projectList = [];
+  Campaign? campaign;
+  bool isLoading = false;
 
   //CONTROLLERS
   TextEditingController campaignNameController = TextEditingController();
-  TextEditingController emailTemplateController = TextEditingController();
-  TextEditingController landingPageController = TextEditingController();
-  TextEditingController urlController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController domainController = TextEditingController();
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
 
   List<String> targetEmails = [];
 
   //KEYS
-  final GlobalKey<FormState> _createProjectKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _createCampaignKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
           color: Colors.grey[200],
           height: height,
@@ -67,7 +69,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                 children: [
                                   titleWidget(),
                                   SizedBox(height: 30),
-                                  Expanded(child: projectsBox())
+                                  Expanded(child: campaignsBox())
                                 ],
                               ),
                             ),
@@ -92,24 +94,47 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
-  Widget projectsBox() {
+  setCampaign() {
+    campaign = Campaign(
+      projectId: 11,
+      name: campaignNameController.text,
+      domain: domainController.text,
+      description: descriptionController.text,
+      endDate: DateTime.parse(endDateController.text),
+      startDate: DateTime.parse(startDateController.text),
+    );
+  }
+
+  _createCampaign() async {
+    _toggleLoading();
+    await dataProvider.createCampaign(campaign!);
+    _toggleLoading();
+  }
+
+  void _toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
+
+  Widget campaignsBox() {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: FutureBuilder<List<Project>>(
-        future: dataProvider.getProjects(widget.user.email!),
+      child: FutureBuilder<List<Campaign>>(
+        future: dataProvider.getCampaigns(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            projectList = snapshot.data;
+            campaignsList = snapshot.data;
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: projectList!.length,
+              itemCount: campaignsList!.length,
               itemBuilder: (BuildContext context, int index) {
-                return CampaignTile(campaign: projectList![index]);
+                return CampaignTile(campaign: campaignsList![index]);
               },
             );
           } else if (snapshot.hasError) {
@@ -196,7 +221,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       color: Colors.white,
       child: Form(
-        key: _createProjectKey,
+        key: _createCampaignKey,
         child: SizedBox(
           width: width,
           child: Column(
@@ -206,14 +231,14 @@ class _CampaignsPageState extends State<CampaignsPage> {
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Text("Create New Project", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                child: Text("Create New Campaign", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
               SizedBox(height: 10),
               Divider(thickness: 1, color: Colors.grey),
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Text("Project Name", style: TextStyle(fontSize: 15, color: Colors.grey)),
+                child: Text("Campaign Name", style: TextStyle(fontSize: 15, color: Colors.grey)),
               ),
               SizedBox(height: 5),
               Padding(
@@ -221,14 +246,14 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 child: TextFormField(
                   controller: campaignNameController,
                   decoration: const InputDecoration(
-                      labelText: "Enter a project name",
+                      labelText: "Enter a campaign name",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(7))),
                       errorBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red, width: 5))),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return "Please enter a project name.";
+                      return "Please enter a campaign name.";
                     }
                   },
                   textAlign: TextAlign.left,
@@ -243,7 +268,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: TextFormField(
-                  controller: urlController,
+                  controller: domainController,
                   decoration: const InputDecoration(
                       labelText: "Enter a domain name",
                       border: OutlineInputBorder(
@@ -253,6 +278,30 @@ class _CampaignsPageState extends State<CampaignsPage> {
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return "Please enter a domain name.";
+                    }
+                  },
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Text("Description", style: TextStyle(fontSize: 15, color: Colors.grey)),
+              ),
+              SizedBox(height: 5),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: TextFormField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(
+                      labelText: "Enter a description of the campaign",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7))),
+                      errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 5))),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter a description.";
                     }
                   },
                   textAlign: TextAlign.left,
@@ -331,12 +380,16 @@ class _CampaignsPageState extends State<CampaignsPage> {
                       flex: 3,
                       child: MaterialButton(
                         onPressed: () {
-
+                          setCampaign();
+                          _createCampaign();
+                          setState(() {
+                            createCampaign = false;
+                          });
                         },
                         elevation: 0,
                         height: 50,
                         color: Colors.lightGreenAccent,
-                        child: Text("Create Project", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                        child: Text("Create Campaign", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                       ),
                     ),
                     Spacer(),
