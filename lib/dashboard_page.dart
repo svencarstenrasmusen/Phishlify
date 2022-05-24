@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/projects_page.dart';
 
+import 'campaigns_page.dart';
+
 class DashboardPage extends StatefulWidget {
   final String title;
   final User user;
@@ -49,7 +51,7 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 10),
           menuButton(Icons.analytics_outlined, "Dashboard", "/dashboard", true),
           const SizedBox(height: 10),
-          menuButton(Icons.add_box_outlined, "Campaigns", "/dashboard", false),
+          menuButton(Icons.add_box_outlined, "Campaigns", "/campaigns", false),
           const SizedBox(height: 10),
           menuButton(Icons.folder_outlined, "Projects", "/projects", false),
           const SizedBox(height: 10),
@@ -94,6 +96,13 @@ class _DashboardPageState extends State<DashboardPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => ProjectsPage(title: "Projects", user: widget.user)),
+            );
+            break;
+          case '/campaigns':
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user)),
             );
             break;
           default:
