@@ -3,6 +3,7 @@ import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
 import 'package:phishing_framework/custom_widgets/project_tile.dart';
 
+import 'campaigns_page.dart';
 import 'dashboard_page.dart';
 
 class ProjectsPage extends StatefulWidget {
@@ -202,7 +203,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
           menuButton(
               Icons.analytics_outlined, "Dashboard", "/dashboard", false),
           const SizedBox(height: 10),
-          menuButton(Icons.add_box_outlined, "Campaigns", "/dashboard", false),
+          menuButton(Icons.add_box_outlined, "Campaigns", "/campaigns", false),
           const SizedBox(height: 10),
           menuButton(Icons.folder_outlined, "Projects", "/projects", true),
           const SizedBox(height: 10),
@@ -246,6 +247,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => DashboardPage(title: "Dashboard", user: widget.user)),
+            );
+            break;
+          case '/campaigns':
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user)),
             );
             break;
           case '/projects':
