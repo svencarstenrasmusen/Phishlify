@@ -36,7 +36,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
   List<String> targetEmails = [];
 
   //KEYS
-  final GlobalKey<FormState> _createProjectKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _createCampaignKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +221,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       color: Colors.white,
       child: Form(
-        key: _createProjectKey,
+        key: _createCampaignKey,
         child: SizedBox(
           width: width,
           child: Column(
@@ -231,14 +231,14 @@ class _CampaignsPageState extends State<CampaignsPage> {
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Text("Create New Project", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                child: Text("Create New Campaign", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
               SizedBox(height: 10),
               Divider(thickness: 1, color: Colors.grey),
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Text("Project Name", style: TextStyle(fontSize: 15, color: Colors.grey)),
+                child: Text("Campaign Name", style: TextStyle(fontSize: 15, color: Colors.grey)),
               ),
               SizedBox(height: 5),
               Padding(
@@ -246,14 +246,14 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 child: TextFormField(
                   controller: campaignNameController,
                   decoration: const InputDecoration(
-                      labelText: "Enter a project name",
+                      labelText: "Enter a campaign name",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(7))),
                       errorBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red, width: 5))),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return "Please enter a project name.";
+                      return "Please enter a campaign name.";
                     }
                   },
                   textAlign: TextAlign.left,
@@ -292,7 +292,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: TextFormField(
-                  controller: domainController,
+                  controller: descriptionController,
                   decoration: const InputDecoration(
                       labelText: "Enter a description of the campaign",
                       border: OutlineInputBorder(
@@ -380,12 +380,16 @@ class _CampaignsPageState extends State<CampaignsPage> {
                       flex: 3,
                       child: MaterialButton(
                         onPressed: () {
-
+                          setCampaign();
+                          _createCampaign();
+                          setState(() {
+                            createCampaign = false;
+                          });
                         },
                         elevation: 0,
                         height: 50,
                         color: Colors.lightGreenAccent,
-                        child: Text("Create Project", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                        child: Text("Create Campaign", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                       ),
                     ),
                     Spacer(),
