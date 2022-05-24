@@ -39,3 +39,14 @@ class Project {
     return dateString;
   }
 }
+
+class Campaign {
+  int? id;
+
+  Campaign({this.id});
+
+  @override
+  String toString() {
+    return '$id';
+  }
+}
