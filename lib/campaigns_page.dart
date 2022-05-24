@@ -23,6 +23,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
   DataProvider dataProvider = DataProvider();
   List<Campaign>? campaignsList = [];
   List<Project>? projectList = [];
+  Campaign? campaign;
+  bool isLoading = false;
 
   //CONTROLLERS
   TextEditingController campaignNameController = TextEditingController();
@@ -90,6 +92,29 @@ class _CampaignsPageState extends State<CampaignsPage> {
           )
       ),
     );
+  }
+
+  setCampaign() {
+    campaign = Campaign(
+      projectId: 11,
+      name: campaignNameController.text,
+      domain: domainController.text,
+      description: descriptionController.text,
+      endDate: DateTime.parse(endDateController.text),
+      startDate: DateTime.parse(startDateController.text),
+    );
+  }
+
+  _createCampaign() async {
+    _toggleLoading();
+    await dataProvider.createCampaign(campaign!);
+    _toggleLoading();
+  }
+
+  void _toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
   }
 
   Widget campaignsBox() {
