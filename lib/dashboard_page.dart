@@ -95,8 +95,10 @@ class _DashboardPageState extends State<DashboardPage> {
               MaterialPageRoute(
                   builder: (context) => ProjectsPage(title: "Projects", user: widget.user)),
             );
+            break;
+          default:
+            Navigator.pushNamed(context, routeName);
         }
-        Navigator.pushNamed(context, routeName);
       },
     );
   }
