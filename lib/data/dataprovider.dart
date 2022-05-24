@@ -118,7 +118,7 @@ class DataProvider {
     }
   }
 
-  Future<List<Campaign>> getCampaigns(String email) async {
+  Future<List<Campaign>> getCampaigns() async {
     final response = await http.get(kBaseUrl.replace(path: '/campaigns/all'), headers: headers);
 
     if (response.statusCode == 200) {
