@@ -3,6 +3,8 @@ import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
 import 'package:phishing_framework/custom_widgets/project_tile.dart';
 
+import 'dashboard_page.dart';
+
 class ProjectsPage extends StatefulWidget {
   final String title;
   final User user;
@@ -153,7 +155,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   Widget projectsBox() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: FutureBuilder<List<Project>>(
         future: dataProvider.getProjects(widget.user.email!),
         builder: (context, snapshot) {
@@ -238,7 +240,19 @@ class _ProjectsPageState extends State<ProjectsPage> {
         ],
       ),
       onPressed: () {
-        Navigator.pushNamed(context, routeName);
+        switch (routeName) {
+          case '/dashboard':
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DashboardPage(title: "Dashboard", user: widget.user)),
+            );
+            break;
+          case '/projects':
+            break;
+          default:
+            Navigator.pushNamed(context, routeName);
+        }
       },
     );
   }
