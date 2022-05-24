@@ -118,6 +118,16 @@ class DataProvider {
     }
   }
 
+  Future<List<Campaign>> getCampaigns(String email) async {
+    final response = await http.get(kBaseUrl.replace(path: '/campaigns/all'), headers: headers);
+
+    if (response.statusCode == 200) {
+      return parser.parseListOfCampaigns(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load all projects');
+    }
+  }
+
   ///Standard function to format the date to send a correctly structured date.
   String _formatDate(DateTime? date) {
     String dateString = "${date!.year}-${date.month}-${date.day}";
