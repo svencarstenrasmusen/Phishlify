@@ -37,12 +37,12 @@ class ResponseParser {
   //CAMPAIGN PARSER
   Campaign parseCampaign(Map jsonCampaign) {
     return Campaign(
-        id: jsonCampaign['id'],
+        id: jsonCampaign['campaignId'],
         projectId: jsonCampaign['projectId'],
         name: jsonCampaign['name'],
         domain: jsonCampaign['domain'],
-        startDate: jsonCampaign['startDate'],
-        endDate: jsonCampaign['endDate'],
+        startDate: formatDate(jsonCampaign['startDate']),
+        endDate: formatDate(jsonCampaign['endDate']),
         description: jsonCampaign['description']
     );
   }
