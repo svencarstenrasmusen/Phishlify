@@ -11,6 +11,7 @@ const loginRoute = require('./routes/login');
 const projectsRoute = require('./routes/projects');
 const createProjectRoute = require('./routes/createProject');
 const campaignsRoute = require('./routes/campaigns');
+const createCampaignRoute = require('./routes/createCampaign');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -20,7 +21,8 @@ app.use('/register', registerRoute);
 app.use('/login', loginRoute);
 app.use('/projects/:email', projectsRoute);
 app.use('/projects/create', createProjectRoute);
-app.use('/campaigns/:projectid', campaignsRoute);
+app.use('/campaigns/all', campaignsRoute);
+app.use('/campaigns/create', createCampaignRoute);
 
 // start server 
 app.listen(port, () => {
