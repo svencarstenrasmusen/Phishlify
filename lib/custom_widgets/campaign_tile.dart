@@ -36,7 +36,7 @@ class _CampaignTileState extends State<CampaignTile> {
                       Spacer(),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
-                        child: Row(children: [Text("${widget.campaign.id}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))],),
+                        child: Row(children: [Text("${widget.campaign.name}", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))],),
                       ),
                       Spacer(),
                     ],
