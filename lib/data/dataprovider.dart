@@ -118,7 +118,7 @@ class DataProvider {
     }
   }
 
-  Future<List<Campaign>> getCampaignsByProjectId(String projectId) async {
+  Future<List<Campaign>> getCampaignsByProjectId(int projectId) async {
     final response = await http.get(kBaseUrl.replace(path: '/campaignsByProjectId/$projectId'), headers: headers);
 
     if (response.statusCode == 200) {

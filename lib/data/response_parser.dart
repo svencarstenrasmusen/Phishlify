@@ -19,7 +19,7 @@ class ResponseParser {
   //PROJECT PARSER
   Project parseProject(Map jsonProject) {
     return Project(
-      id: jsonProject['id'],
+      id: jsonProject['projectId'],
       userId: jsonProject['userId'],
       name: jsonProject['name'],
       personInCharge: jsonProject['personInCharge'],

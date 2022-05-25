@@ -122,7 +122,10 @@ class _CampaignsPageState extends State<CampaignsPage> {
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: FutureBuilder<List<Campaign>>(
-        future: dataProvider.getCampaigns(),
+        future: widget.project == null
+            //If project is NULL then no project was selected -> show ALL campaigns
+            ? dataProvider.getCampaigns()
+            : dataProvider.getCampaignsByProjectId(widget.project!.id!),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             campaignsList = snapshot.data;

@@ -170,10 +170,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
               ),
               itemCount: projectList!.length,
               itemBuilder: (BuildContext context, int index) {
-                /**return ListTile(
-                  title: Text(projectList![index].name!),
-                );*/
-                return ProjectTile(project: projectList![index]);
+                return ProjectTile(project: projectList![index], showProjectDetails: showProjectDetails);
               },
             );
           } else if (snapshot.hasError) {
@@ -552,6 +549,14 @@ class _ProjectsPageState extends State<ProjectsPage> {
           DropdownMenuItem(child: Text("German"), value: "German"),
         ],
       ),
+    );
+  }
+
+  showProjectDetails(Project project) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user, project: project)),
     );
   }
 }
