@@ -111,7 +111,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   setCampaign() {
     campaign = Campaign(
-      projectId: 11,
+      projectId: widget.project!.id,
       name: campaignNameController.text,
       domain: domainController.text,
       description: descriptionController.text,
@@ -260,7 +260,9 @@ class _CampaignsPageState extends State<CampaignsPage> {
           ],
         ),
         Spacer(),
-        MaterialButton(
+        widget.project == null
+          ? Container()
+          : MaterialButton(
           onPressed: () {
             setState(() {
               createCampaign = true;

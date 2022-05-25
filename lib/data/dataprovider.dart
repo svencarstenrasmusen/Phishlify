@@ -90,7 +90,7 @@ class DataProvider {
   Future<bool> createCampaign(Campaign campaign) async {
     var body = {
       "name": campaign.name,
-      "projectId": campaign.id,
+      "projectId": campaign.projectId,
       "domain": campaign.domain,
       "startDate": _formatDate(campaign.startDate),
       "endDate": _formatDate(campaign.endDate),
