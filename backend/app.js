@@ -12,6 +12,7 @@ const projectsRoute = require('./routes/projects');
 const createProjectRoute = require('./routes/createProject');
 const campaignsRoute = require('./routes/campaigns');
 const createCampaignRoute = require('./routes/createCampaign');
+const campaignsByProjectId = require('./routes/campaignsByProjectId');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -23,6 +24,7 @@ app.use('/projects/:email', projectsRoute);
 app.use('/projects/create', createProjectRoute);
 app.use('/campaigns/all', campaignsRoute);
 app.use('/campaigns/create', createCampaignRoute);
+app.use('/campaignsByProjectId/:projectId', campaignsByProjectId);
 
 // start server 
 app.listen(port, () => {
