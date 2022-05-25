@@ -250,7 +250,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user)),
+                  builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user, project: null)),
             );
             break;
           case '/projects':

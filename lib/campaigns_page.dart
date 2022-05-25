@@ -69,7 +69,22 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                 children: [
                                   titleWidget(),
                                   SizedBox(height: 30),
-                                  Expanded(child: campaignsBox())
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(child: widget.project == null ? Container() : projectDetailsBox())
+                                          ],
+                                        ),
+                                        Container(
+                                            color: Colors.white,
+                                            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                            child: Divider(thickness: 1, color: Colors.grey)),
+                                        Expanded(child: campaignsBox())
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -149,6 +164,47 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
+  Widget projectDetailsBox() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text("Project Name: ", style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("${widget.project!.name}"),
+            ],
+          ),
+          Row(
+            children: [
+              Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("${widget.project!.personInCharge}"),
+            ],
+          ),
+          Row(
+            children: [
+              Text("Project Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("${widget.project!.formattedStartDate()}"),
+            ],
+          ),
+          Row(
+            children: [
+              Text("Project End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("${widget.project!.formattedEndDate()}"),
+            ],
+          ),
+          Row(
+            children: [
+              Text("Project Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("${widget.project!.domain}"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget userAvatar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -179,12 +235,16 @@ class _CampaignsPageState extends State<CampaignsPage> {
                         color: Colors.grey,
                         fontWeight: FontWeight.bold)),
                 Icon(Icons.chevron_right_outlined),
-                Text("Project: ${widget.project!.name}",
+                widget.project == null
+                    ? Container()
+                    : Text("Project: ${widget.project!.name}",
                     style: TextStyle(
                         fontSize: 15,
                         color: Colors.grey,
                         fontWeight: FontWeight.bold)),
-                Icon(Icons.chevron_right_outlined),
+                widget.project == null
+                    ? Container()
+                    : Icon(Icons.chevron_right_outlined),
                 widget.project == null? Text("All Existing Campaigns",
                     style: TextStyle(
                         fontSize: 15,
