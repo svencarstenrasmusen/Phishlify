@@ -176,7 +176,12 @@ class _CampaignsPageState extends State<CampaignsPage> {
                         color: Colors.grey,
                         fontWeight: FontWeight.bold)),
                 Icon(Icons.chevron_right_outlined),
-                Text("Campaigns",
+                widget.project == null? Text("All Existing Campaigns",
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold))
+                    : Text("Campaigns For Project Named: ${widget.project!.name}",
                     style: TextStyle(
                         fontSize: 15,
                         color: Colors.black,
