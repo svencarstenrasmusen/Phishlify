@@ -118,13 +118,23 @@ class DataProvider {
     }
   }
 
+  Future<List<Campaign>> getCampaignsByProjectId(String projectId) async {
+    final response = await http.get(kBaseUrl.replace(path: '/campaignsByProjectId/$projectId'), headers: headers);
+
+    if (response.statusCode == 200) {
+      return parser.parseListOfCampaigns(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load all campaigns');
+    }
+  }
+
   Future<List<Campaign>> getCampaigns() async {
     final response = await http.get(kBaseUrl.replace(path: '/campaigns/all'), headers: headers);
 
     if (response.statusCode == 200) {
       return parser.parseListOfCampaigns(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to load all projects');
+      throw Exception('Failed to load all campaigns');
     }
   }
 
