@@ -144,12 +144,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             campaignsList = snapshot.data;
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
+            return ListView.builder(
               itemCount: campaignsList!.length,
               itemBuilder: (BuildContext context, int index) {
                 return CampaignTile(campaign: campaignsList![index]);
