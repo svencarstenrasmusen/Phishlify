@@ -143,6 +143,15 @@ class _CampaignsPageState extends State<CampaignsPage> {
     });
   }
 
+  void deleteCampaign(Campaign campaign) async {
+    bool flag = await dataProvider.deleteCampaign(campaign.id!);
+    if (flag) {
+      setState(() {
+        campaignsList!.remove(campaign);
+      });
+    }
+  }
+
   Widget listHeader() {
     return Container(
       color: Colors.white,
@@ -176,7 +185,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               itemCount: campaignsList!.length,
               itemBuilder: (BuildContext context, int index) {
-                return CampaignTile(campaign: campaignsList![index]);
+                return CampaignTile(campaign: campaignsList![index], removeCallback: deleteCampaign);
               },
             );
           } else if (snapshot.hasError) {
