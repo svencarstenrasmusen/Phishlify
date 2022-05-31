@@ -10,7 +10,7 @@ class DataProvider {
   ResponseParser parser = ResponseParser();
 
   //static final String kHost = '127.0.0.1:3000';
-  static final String kHost = '172.25.2.82:3000'; //for pc to laptop
+  static final String kHost = '192.168.0.199:3000'; //for pc to laptop
   static final String kBasePath = '/';
   
   //TODO: change to secure channel HTTPS!
@@ -84,6 +84,38 @@ class DataProvider {
     } else {
       return false;
       //throw Exception('Error on creating project. Response: ${response.body}');
+    }
+  }
+
+  Future<bool> deleteProject(int projectId) async {
+    var body = {
+      "projectId": projectId
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/projects/delete/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on creating campaign. Response: ${response.body}');
+    }
+  }
+
+  Future<bool> deleteCampaign(int campaignId) async {
+    var body = {
+      "campaignId": campaignId
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/campaigns/delete/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on creating campaign. Response: ${response.body}');
     }
   }
 
