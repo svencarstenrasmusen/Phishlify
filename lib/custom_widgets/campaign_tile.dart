@@ -16,12 +16,23 @@ class _CampaignTileState extends State<CampaignTile> {
     return Card(
       color: Colors.grey[200],
       child: ListTile(
+        dense: true,
         title: Row(
           children: [
             Expanded(child: Text("${widget.campaign.name!}")),
             Expanded(child: Text("${widget.campaign.formattedStartDate()}")),
             Expanded(child: Text("${widget.campaign.formattedEndDate()}")),
             Expanded(child: Text("${widget.campaign.domain!}")),
+            Expanded(
+              child: Row(
+                children: [
+                  Spacer(),
+                  Expanded(child: Icon(Icons.edit)),
+                  Expanded(child: Icon(Icons.delete_forever)),
+                  Spacer(),
+                ],
+              ),
+            )
           ],
         ),
       ),

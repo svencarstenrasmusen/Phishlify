@@ -77,6 +77,13 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                             Expanded(child: widget.project == null ? Container() : projectDetailsBox())
                                           ],
                                         ),
+                                        widget.project == null
+                                          ? Container()
+                                          : Container(
+                                            color: Colors.white,
+                                            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                            child: Divider(thickness: 1, color: Colors.grey)),
+                                        listHeader(),
                                         Container(
                                             color: Colors.white,
                                             padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -132,10 +139,27 @@ class _CampaignsPageState extends State<CampaignsPage> {
     });
   }
 
+  Widget listHeader() {
+    return Container(
+      color: Colors.white,
+      child: ListTile(
+        dense: true,
+        title: Row(
+          children: [
+            Expanded(child: Text("CAMPAIGN NAME")),
+            Expanded(child: Text("START DATE")),
+            Expanded(child: Text("END DATE")),
+            Expanded(child: Text("URL")),
+            Expanded(child: Text("ACTIONS", textAlign: TextAlign.center)),
+          ],
+        ),
+      )
+    );
+  }
+
   Widget campaignsBox() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: FutureBuilder<List<Campaign>>(
         future: widget.project == null
             //If project is NULL then no project was selected -> show ALL campaigns
@@ -145,6 +169,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
           if (snapshot.hasData) {
             campaignsList = snapshot.data;
             return ListView.builder(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               itemCount: campaignsList!.length,
               itemBuilder: (BuildContext context, int index) {
                 return CampaignTile(campaign: campaignsList![index]);
