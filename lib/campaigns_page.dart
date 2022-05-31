@@ -37,6 +37,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
   DateTime? startDate;
   DateTime? endDate;
 
+  bool _isLoading = false;
+
   List<String> targetEmails = [];
 
   //KEYS
@@ -113,7 +115,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
                   campaignCreationForm(width / 2.5)
                 ],
               )
-                  : Container()
+                  : Container(),
+              _isLoading ? Center(child: CircularProgressIndicator()) : Container()
             ],
           )
       ),
@@ -201,41 +204,67 @@ class _CampaignsPageState extends State<CampaignsPage> {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: Column(
+      child: Row(
         children: [
-          Row(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Project Name: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.name}"),
+              Row(
+                children: [
+                  Text("Project Name: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.name}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.personInCharge}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Project Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.formattedStartDate()}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Project End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.formattedEndDate()}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Project Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.domain}"),
+                ],
+              ),
             ],
           ),
-          Row(
-            children: [
-              Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.personInCharge}"),
-            ],
-          ),
-          Row(
-            children: [
-              Text("Project Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.formattedStartDate()}"),
-            ],
-          ),
-          Row(
-            children: [
-              Text("Project End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.formattedEndDate()}"),
-            ],
-          ),
-          Row(
-            children: [
-              Text("Project Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.domain}"),
-            ],
-          ),
+          Spacer(),
+          IconButton(
+            icon: Icon(Icons.delete_forever_outlined, color: Colors.red),
+            onPressed: () {
+              deleteProject();
+            } ,
+          )
         ],
-      ),
+      )
     );
+  }
+
+  void deleteProject() async {
+    setState(() {
+      _isLoading = true;
+    });
+    bool flag = await dataProvider.deleteProject(widget.project!.id!);
+    setState(() {
+      _isLoading = false;
+    });
+    if (flag == true) {
+      Navigator.of(context).pop();
+    }
   }
 
   Widget userAvatar() {
