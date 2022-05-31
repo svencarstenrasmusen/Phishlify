@@ -32,12 +32,36 @@ class Project {
   }
 
   String formattedStartDate() {
-    String dateString = "${startDate!.day}.${startDate!.month}.${startDate!.year}";
+    String dayFormatted = "0";
+    String monthFormatted = "0";
+    if(startDate!.day < 10) {
+      dayFormatted = dayFormatted + "${startDate!.day}";
+    } else {
+      dayFormatted = "${startDate!.day}";
+    }
+    if(startDate!.month < 10) {
+      monthFormatted = monthFormatted + "${startDate!.month}";
+    } else {
+      monthFormatted = "${startDate!.month}";
+    }
+    String dateString = "$dayFormatted.$monthFormatted.${startDate!.year}";
     return dateString;
   }
 
   String formattedEndDate() {
-    String dateString = "${endDate!.day}.${endDate!.month}.${endDate!.year}";
+    String dayFormatted = "0";
+    String monthFormatted = "0";
+    if(endDate!.day < 10) {
+      dayFormatted = dayFormatted + "${endDate!.day}";
+    } else {
+      dayFormatted = "${endDate!.day}";
+    }
+    if(endDate!.month < 10) {
+      monthFormatted = monthFormatted + "${endDate!.month}";
+    } else {
+      monthFormatted = "${endDate!.month}";
+    }
+    String dateString = "$dayFormatted.$monthFormatted.${endDate!.year}";
     return dateString;
   }
 }
