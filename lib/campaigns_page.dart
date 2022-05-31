@@ -33,6 +33,10 @@ class _CampaignsPageState extends State<CampaignsPage> {
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
 
+  //DATETIMES
+  DateTime? startDate;
+  DateTime? endDate;
+
   List<String> targetEmails = [];
 
   //KEYS
@@ -122,8 +126,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
       name: campaignNameController.text,
       domain: domainController.text,
       description: descriptionController.text,
-      endDate: DateTime.parse(endDateController.text),
-      startDate: DateTime.parse(startDateController.text),
+      endDate: endDate,
+      startDate: startDate,
     );
   }
 
@@ -409,61 +413,9 @@ class _CampaignsPageState extends State<CampaignsPage> {
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("Start Date", style: TextStyle(fontSize: 15, color: Colors.grey)),
-                            SizedBox(height: 5),
-                            Expanded(
-                              child: TextFormField(
-                                controller: startDateController,
-                                decoration: const InputDecoration(
-                                    labelText: "Enter a start date. Format YYYY-MM-DD.",
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(7))),
-                                    errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.red, width: 5))),
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return "Please enter a start date.";
-                                  }
-                                },
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      Expanded(child: startDateButton()),
                       SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("End Date", style: TextStyle(fontSize: 15, color: Colors.grey)),
-                            SizedBox(height: 5),
-                            Expanded(
-                              child: TextFormField(
-                                controller: endDateController,
-                                decoration: const InputDecoration(
-                                    labelText: "Enter a end date. Format YYYY-MM-DD.",
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(7))),
-                                    errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.red, width: 5))),
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return "Please enter a end date.";
-                                  }
-                                },
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      Expanded(child: endDateButton()),
                     ],
                   ),
                 ),
@@ -512,6 +464,138 @@ class _CampaignsPageState extends State<CampaignsPage> {
         ),
       ),
     );
+  }
+
+  Widget startDateButton() {
+    return Container(
+        height: 50,
+        child: MaterialButton(
+          color: Colors.lightGreenAccent,
+          hoverColor: Colors.greenAccent,
+          child: startDate == null
+              ? Text("Pick A Start Date", style: TextStyle(color: Colors.black), textAlign: TextAlign.center)
+              : Text("Start Date: ${formattedStartDate()}", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
+          onPressed: () => chooseStartDate(),
+        )
+    );
+  }
+
+  Widget endDateButton() {
+    return Container(
+        height: 50,
+        child: MaterialButton(
+          color: Colors.lightGreenAccent,
+          hoverColor: Colors.greenAccent,
+          child: endDate == null
+              ? Text("Pick An End Date", style: TextStyle(color: Colors.black), textAlign: TextAlign.center)
+              : Text("End Date: ${formattedEndDate()}", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
+          onPressed: () => chooseEndDate(),
+        )
+    );
+  }
+
+  Future<void> chooseStartDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: widget.project!.startDate!,
+      firstDate: widget.project!.startDate!,
+      lastDate:widget.project!.endDate!,
+    );
+    if (pickedDate != null && endDate == null) {
+      setState(() {
+        startDate = pickedDate;
+      });
+    } else if (pickedDate != null &&
+        endDate != null &&
+        pickedDate.isBefore(endDate!)) {
+      setState(() {
+        startDate = pickedDate;
+      });
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return SimpleDialog(
+              title: Text(
+                  "Please select a start date that is before the selected end date."),
+              children: <Widget>[
+                TextButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    }
+  }
+
+  Future<void> chooseEndDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: widget.project!.startDate!,
+      firstDate: widget.project!.startDate!,
+      lastDate:widget.project!.endDate!,
+    );
+    if (pickedDate != null &&
+        startDate != null &&
+        pickedDate.isAfter(startDate!)) {
+      setState(() {
+        endDate = pickedDate;
+      });
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return SimpleDialog(
+              title: Text(
+                  "Please select a start date first and be sure that the end date is after the start date."),
+              children: <Widget>[
+                TextButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    }
+  }
+
+  String formattedStartDate() {
+    String dayFormatted = "0";
+    String monthFormatted = "0";
+    if(startDate!.day < 10) {
+      dayFormatted = dayFormatted + "${startDate!.day}";
+    } else {
+      dayFormatted = "${startDate!.day}";
+    }
+    if(startDate!.month < 10) {
+      monthFormatted = monthFormatted + "${startDate!.month}";
+    } else {
+      monthFormatted = "${startDate!.month}";
+    }
+    String dateString = "$dayFormatted.$monthFormatted.${startDate!.year}";
+    return dateString;
+  }
+
+  String formattedEndDate() {
+    String dayFormatted = "0";
+    String monthFormatted = "0";
+    if(endDate!.day < 10) {
+      dayFormatted = dayFormatted + "${endDate!.day}";
+    } else {
+      dayFormatted = "${endDate!.day}";
+    }
+    if(endDate!.month < 10) {
+      monthFormatted = monthFormatted + "${endDate!.month}";
+    } else {
+      monthFormatted = "${endDate!.month}";
+    }
+    String dateString = "$dayFormatted.$monthFormatted.${endDate!.year}";
+    return dateString;
   }
 
   Widget menuBar() {
