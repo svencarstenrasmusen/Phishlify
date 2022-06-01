@@ -26,7 +26,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
   DataProvider dataProvider = DataProvider();
   List<Campaign>? campaignsList = [];
   List<Project>? projectList = [];
-  List<String> emails = [];
+  List<Email> emails = [];
   Campaign? campaign;
   bool isLoading = false;
 
@@ -52,11 +52,6 @@ class _CampaignsPageState extends State<CampaignsPage> {
   @override
   void initState() {
     super.initState();
-    emails.add("sven@home.lu");
-    emails.add("carl@home.lu");
-    emails.add("carmen@home.lu");
-    emails.add("pierre@home.lu");
-    emails.add("luka@home.lu");
   }
 
   @override
@@ -347,7 +342,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
     return MaterialButton(
       color: Colors.lightGreenAccent,
       onPressed: () {
-        addEmailDialog();
+        //addEmailDialog();
+        print("tap");
       },
       height: 25,
       child: Text("Add Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
@@ -355,13 +351,25 @@ class _CampaignsPageState extends State<CampaignsPage> {
   }
 
   Widget emailList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-      itemCount: emails.length,
-      itemBuilder: (BuildContext context, int index) {
-        return emailTile(emails[index]);
-      },
+    return Container(
+      child: FutureBuilder<List<Email>>(
+        future: dataProvider.getEmailsByCampaign(widget.selectedCampaign!.id!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            emails = snapshot.data!;
+            return ListView.builder(
+              padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+              itemCount: emails.length,
+              itemBuilder: (BuildContext context, int index) {
+                return emailTile(emails[index].email!);
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'));
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
     );
   }
 
@@ -387,11 +395,11 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
-  void addEmail(String email) {
+  /**void addEmail(String email) {
     setState(() {
       emails.add(email);
     });
-  }
+  }*/
 
   void removeEmail(String email) {
     setState(() {
@@ -775,7 +783,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               ),
               MaterialButton(
                   onPressed: () {
-                    addEmail(emailController.text);
+                    //addEmail(emailController.text);
                     _dismissDialog();
                   },
                   color: Colors.blue,
