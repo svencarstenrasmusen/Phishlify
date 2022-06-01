@@ -10,9 +10,10 @@ class CampaignsPage extends StatefulWidget {
   final String title;
   final User user;
   final Project? project;
+  final bool? selectedCampaign;
   final Function(Project)? removeCallback;
 
-  const CampaignsPage({Key? key, this.project, required this.title, required this.user, this.removeCallback}) : super(key: key);
+  const CampaignsPage({Key? key, this.project, required this.title, required this.user, this.selectedCampaign, this.removeCallback}) : super(key: key);
 
   @override
   State<CampaignsPage> createState() => _CampaignsPageState();
@@ -188,7 +189,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               itemCount: campaignsList!.length,
               itemBuilder: (BuildContext context, int index) {
-                return CampaignTile(campaign: campaignsList![index], removeCallback: deleteCampaign);
+                return CampaignTile(campaign: campaignsList![index], removeCallback: deleteCampaign, onClick: selectCampaign);
               },
             );
           } else if (snapshot.hasError) {
@@ -252,6 +253,10 @@ class _CampaignsPageState extends State<CampaignsPage> {
         ],
       )
     );
+  }
+
+  void selectCampaign(Campaign campaign) {
+    print("Selected Campaign: ${campaign.name}");
   }
 
   void deleteProject() async {
