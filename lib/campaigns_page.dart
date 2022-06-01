@@ -10,8 +10,9 @@ class CampaignsPage extends StatefulWidget {
   final String title;
   final User user;
   final Project? project;
+  final Function(Project)? removeCallback;
 
-  const CampaignsPage({Key? key, this.project, required this.title, required this.user}) : super(key: key);
+  const CampaignsPage({Key? key, this.project, required this.title, required this.user, this.removeCallback}) : super(key: key);
 
   @override
   State<CampaignsPage> createState() => _CampaignsPageState();
@@ -116,7 +117,6 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 ],
               )
                   : Container(),
-              _isLoading ? Center(child: CircularProgressIndicator()) : Container()
             ],
           )
       ),
@@ -255,16 +255,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
   }
 
   void deleteProject() async {
-    setState(() {
-      _isLoading = true;
-    });
-    bool flag = await dataProvider.deleteProject(widget.project!.id!);
-    setState(() {
-      _isLoading = false;
-    });
-    if (flag == true) {
-      Navigator.of(context).pop();
-    }
+    widget.removeCallback!(widget.project!);
+    Navigator.of(context).pop();
   }
 
   Widget userAvatar() {

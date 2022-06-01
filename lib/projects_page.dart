@@ -18,6 +18,7 @@ class ProjectsPage extends StatefulWidget {
 class _ProjectsPageState extends State<ProjectsPage> {
   String? selectedLanguage;
   bool createProject = false;
+  bool _isLoading = false;
 
   //CONTROLLERS
   TextEditingController projectNameController = TextEditingController();
@@ -93,7 +94,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
                     projectCreationForm(width / 2.5)
                   ],
                 )
-              : Container()
+              : Container(),
+            _isLoading ? Center(child: CircularProgressIndicator()) : Container()
           ],
         )
       ),
@@ -636,11 +638,26 @@ class _ProjectsPageState extends State<ProjectsPage> {
     );
   }
 
+  void deleteProject(Project project) async {
+    setState(() {
+      _isLoading = true;
+    });
+    bool flag = await dataProvider.deleteProject(project.id!);
+    setState(() {
+      _isLoading = false;
+    });
+    if (flag) {
+      setState(() {
+        projectList!.remove(project);
+      });
+    }
+  }
+
   showProjectDetails(Project project) {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user, project: project)),
+          builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user, project: project, removeCallback: deleteProject)),
     );
   }
 }
