@@ -15,6 +15,7 @@
 CREATE TABLE IF NOT EXISTS `projects` (
   `projectId` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
+  `customer` varchar(45) DEFAULT NULL,
   `personInCharge` varchar(45) DEFAULT NULL,
   `domain` varchar(45) DEFAULT NULL,
   `startDate` datetime DEFAULT NULL,
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   PRIMARY KEY (`projectId`),
   KEY `userId_idx` (`userId`),
   CONSTRAINT `userId` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 
