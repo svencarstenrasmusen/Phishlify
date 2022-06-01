@@ -4,9 +4,10 @@ import 'package:phishing_framework/data/dataprovider.dart';
 
 class CampaignTile extends StatefulWidget {
   final Function(Campaign) removeCallback;
+  final Function(Campaign) onClick;
   final Campaign campaign;
 
-  CampaignTile({required this.campaign, required this.removeCallback});
+  CampaignTile({required this.campaign, required this.removeCallback, required this.onClick});
 
   @override
   _CampaignTileState createState() => _CampaignTileState();
@@ -22,7 +23,7 @@ class _CampaignTileState extends State<CampaignTile> {
       color: Colors.grey[200],
       child: MaterialButton(
         onPressed: () {
-          print("tap");
+          widget.onClick(widget.campaign);
         },
         child: ListTile(
           dense: true,
