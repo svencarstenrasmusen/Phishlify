@@ -342,8 +342,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
     return MaterialButton(
       color: Colors.lightGreenAccent,
       onPressed: () {
-        //addEmailDialog();
-        print("tap");
+        addEmailDialog();
       },
       height: 25,
       child: Text("Add Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
@@ -395,11 +394,11 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
-  /**void addEmail(String email) {
-    setState(() {
-      emails.add(email);
-    });
-  }*/
+  void addEmail(String email) async {
+    _toggleLoading();
+    await dataProvider.addEmail(email, widget.selectedCampaign!.id!);
+    _toggleLoading();
+  }
 
   void removeEmail(String email) {
     setState(() {
@@ -783,7 +782,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               ),
               MaterialButton(
                   onPressed: () {
-                    //addEmail(emailController.text);
+                    addEmail(emailController.text);
                     _dismissDialog();
                   },
                   color: Colors.blue,
