@@ -271,8 +271,22 @@ class _CampaignsPageState extends State<CampaignsPage> {
             color: Colors.grey,
             width: 2,
           ),
-          Spacer(flex: 2),
-          Column()
+          SizedBox(width: 5),
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("EMAIL TEXT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 5),
+                Expanded(child: emailTextBox()),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: sendEmailButton(),
+                )
+              ],
+            ),
+          )
         ],
       )
     );
@@ -346,6 +360,17 @@ class _CampaignsPageState extends State<CampaignsPage> {
       },
       height: 25,
       child: Text("Add Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  MaterialButton sendEmailButton() {
+    return MaterialButton(
+      color: Colors.lightGreenAccent,
+      onPressed: () {
+        print("tapped send email");
+      },
+      height: 25,
+      child: Text("Send Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -687,6 +712,14 @@ class _CampaignsPageState extends State<CampaignsPage> {
               : Text("End Date: ${formattedEndDate()}", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
           onPressed: () => chooseEndDate(),
         )
+    );
+  }
+
+  Widget emailTextBox() {
+    return Container(
+      color: Colors.grey[200],
+      child: TextFormField(
+      ),
     );
   }
 
