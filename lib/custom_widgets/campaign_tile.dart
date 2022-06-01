@@ -20,34 +20,39 @@ class _CampaignTileState extends State<CampaignTile> {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.grey[200],
-      child: ListTile(
-        dense: true,
-        title: Row(
-          children: [
-            Expanded(child: Text("${widget.campaign.name!}")),
-            Expanded(child: Text("${widget.campaign.formattedStartDate()}")),
-            Expanded(child: Text("${widget.campaign.formattedEndDate()}")),
-            Expanded(child: Text("${widget.campaign.domain!}")),
-            Expanded(
-              child: Row(
-                children: [
-                  Spacer(),
-                  Expanded(child: IconButton(
-                    onPressed: () {
-                    },
-                    icon: Icon(Icons.edit),
-                  )),
-                  Expanded(child: IconButton(
-                    onPressed: () {
-                      showConfirmDeleteDialog();
-                    },
-                    icon: Icon(Icons.delete_forever),
-                  )),
-                  Spacer(),
-                ],
-              ),
-            )
-          ],
+      child: MaterialButton(
+        onPressed: () {
+          print("tap");
+        },
+        child: ListTile(
+          dense: true,
+          title: Row(
+            children: [
+              Expanded(child: Text("${widget.campaign.name!}")),
+              Expanded(child: Text("${widget.campaign.formattedStartDate()}")),
+              Expanded(child: Text("${widget.campaign.formattedEndDate()}")),
+              Expanded(child: Text("${widget.campaign.domain!}")),
+              Expanded(
+                child: Row(
+                  children: [
+                    Spacer(),
+                    Expanded(child: IconButton(
+                      onPressed: () {
+                      },
+                      icon: Icon(Icons.edit),
+                    )),
+                    Expanded(child: IconButton(
+                      onPressed: () {
+                        showConfirmDeleteDialog();
+                      },
+                      icon: Icon(Icons.delete_forever),
+                    )),
+                    Spacer(),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
