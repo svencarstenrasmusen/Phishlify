@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class User {
   int? id;
@@ -115,5 +116,17 @@ class Campaign {
   @override
   String toString() {
     return 'Campaign: $id, $name, $domain';
+  }
+}
+
+class Email {
+  String? email;
+  int? campaignId;
+
+  Email({this.email, this.campaignId});
+
+  @override
+  String toString() {
+    return 'Email: $email, $campaignId';
   }
 }

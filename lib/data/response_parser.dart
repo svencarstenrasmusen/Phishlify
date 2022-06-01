@@ -52,6 +52,18 @@ class ResponseParser {
     return jsonList.map((jsonCampaign) => parseCampaign(jsonCampaign)).toList();
   }
 
+  //EMAIL PARSER
+  Email parseEmail(Map jsonEmail) {
+    return Email(
+      email: jsonEmail['email'],
+      campaignId: jsonEmail['campaignId'],
+    );
+  }
+
+  List<Email> parseListOfEmails(List jsonList) {
+    return jsonList.map((jsonEmail) => parseEmail(jsonEmail)).toList();
+  }
+
   DateTime formatDate(String dateString) {
     return DateTime.parse(dateString);
   }
