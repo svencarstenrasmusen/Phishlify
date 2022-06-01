@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
@@ -25,6 +26,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
   DataProvider dataProvider = DataProvider();
   List<Campaign>? campaignsList = [];
   List<Project>? projectList = [];
+  List<String> emails = [];
   Campaign? campaign;
   bool isLoading = false;
 
@@ -34,6 +36,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
   TextEditingController domainController = TextEditingController();
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   //DATETIMES
   DateTime? startDate;
@@ -45,6 +48,16 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   //KEYS
   final GlobalKey<FormState> _createCampaignKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    emails.add("sven@home.lu");
+    emails.add("carl@home.lu");
+    emails.add("carmen@home.lu");
+    emails.add("pierre@home.lu");
+    emails.add("luka@home.lu");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +219,67 @@ class _CampaignsPageState extends State<CampaignsPage> {
   Widget selectedCampaignBox() {
     return Container(
       color: Colors.white,
-      child: Center(child: Text("${widget.selectedCampaign!.name!}"))
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("DETAILS:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.project!.personInCharge}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.selectedCampaign!.formattedStartDate()}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.selectedCampaign!.formattedStartDate()}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Description: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.selectedCampaign!.description}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.selectedCampaign!.domain}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Customer: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.project!.customer}"),
+                  ],
+                ),
+                SizedBox(height: 15),
+                Text("TARGET EMAILS:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                Expanded(child: emailList()),
+                addEmailButton()
+              ],
+            ),
+          ),
+          SizedBox(width: 5),
+          Container(
+            color: Colors.grey,
+            width: 2,
+          ),
+          Spacer(flex: 2),
+          Column()
+        ],
+      )
     );
   }
 
@@ -250,6 +323,12 @@ class _CampaignsPageState extends State<CampaignsPage> {
                   Text("${widget.project!.domain}"),
                 ],
               ),
+              Row(
+                children: [
+                  Text("Customer: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.customer}"),
+                ],
+              ),
             ],
           ),
           Spacer(),
@@ -262,6 +341,62 @@ class _CampaignsPageState extends State<CampaignsPage> {
         ],
       )
     );
+  }
+
+  MaterialButton addEmailButton() {
+    return MaterialButton(
+      color: Colors.lightGreenAccent,
+      onPressed: () {
+        addEmailDialog();
+      },
+      height: 25,
+      child: Text("Add Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget emailList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      itemCount: emails.length,
+      itemBuilder: (BuildContext context, int index) {
+        return emailTile(emails[index]);
+      },
+    );
+  }
+
+  Widget emailTile(String email) {
+    return Card(
+      margin: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+      child: ListTile(
+        dense: true,
+        title: Row(
+          children: [
+            Text(email),
+            Spacer(),
+            IconButton(
+              iconSize: 15,
+              icon: Icon(Icons.remove_circle, color: Colors.red),
+              onPressed: () {
+                removeEmail(email);
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void addEmail(String email) {
+    setState(() {
+      emails.add(email);
+    });
+  }
+
+  void removeEmail(String email) {
+    setState(() {
+      emails.remove(email);
+    });
   }
 
   void selectCampaign(Campaign campaign) {
@@ -616,6 +751,44 @@ class _CampaignsPageState extends State<CampaignsPage> {
             );
           });
     }
+  }
+
+  addEmailDialog() {
+    emailController.text = "";
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Please Enter an Email'),
+            content: TextField(
+              controller: emailController,
+              textAlignVertical: TextAlignVertical.center,
+              decoration: InputDecoration(hintText: "Email"),
+            ),
+            actions: [
+              MaterialButton(
+                  onPressed: () {
+                    _dismissDialog();
+                  },
+                  color: Colors.white,
+                  child: Text('Cancel')
+              ),
+              MaterialButton(
+                  onPressed: () {
+                    addEmail(emailController.text);
+                    _dismissDialog();
+                  },
+                  color: Colors.blue,
+                  child: Text('Add Email', style: TextStyle(color: Colors.white))
+              )
+            ],
+          );
+        }
+    );
+  }
+
+  _dismissDialog() {
+    Navigator.pop(context);
   }
 
   String formattedStartDate() {

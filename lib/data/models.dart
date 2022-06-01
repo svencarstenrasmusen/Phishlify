@@ -19,12 +19,13 @@ class Project {
   String? name;
   String? personInCharge;
   String? domain;
+  String? customer;
   DateTime? startDate;
   DateTime? endDate;
   String? language;
 
   Project({this.id, this.userId, this.name, this.personInCharge, this.domain,
-    this.startDate, this.endDate, this.language});
+    this.customer, this.startDate, this.endDate, this.language});
 
   @override
   String toString() {

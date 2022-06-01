@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/models.dart';
-import 'package:phishing_framework/campaigns_page.dart';
 
 class ProjectTile extends StatefulWidget {
   final Project project;

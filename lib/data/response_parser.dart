@@ -26,7 +26,8 @@ class ResponseParser {
       domain: jsonProject['domain'],
       startDate: formatDate(jsonProject['startDate']),
       endDate: formatDate(jsonProject['endDate']),
-      language: jsonProject['language']
+      language: jsonProject['language'],
+      customer: jsonProject['customer']
     );
   }
 

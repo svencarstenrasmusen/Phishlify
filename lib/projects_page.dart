@@ -615,7 +615,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
       startDate: startDate,
       endDate: endDate,
       language: selectedLanguage,
-      personInCharge: widget.user.name
+      personInCharge: widget.user.name,
+      customer: customerController.text
     );
   }
 
