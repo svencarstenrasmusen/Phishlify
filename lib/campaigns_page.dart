@@ -10,7 +10,7 @@ class CampaignsPage extends StatefulWidget {
   final String title;
   final User user;
   final Project? project;
-  final bool? selectedCampaign;
+  final Campaign? selectedCampaign;
   final Function(Project)? removeCallback;
 
   const CampaignsPage({Key? key, this.project, required this.title, required this.user, this.selectedCampaign, this.removeCallback}) : super(key: key);
@@ -77,7 +77,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                 children: [
                                   titleWidget(),
                                   SizedBox(height: 30),
-                                  Expanded(
+                                  widget.selectedCampaign == null
+                                  ? Expanded(
                                     child: Column(
                                       children: [
                                         Row(
@@ -99,7 +100,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                         Expanded(child: campaignsBox())
                                       ],
                                     ),
-                                  ),
+                                  )
+                                  : Expanded(child: selectedCampaignBox())
                                 ],
                               ),
                             ),
@@ -201,6 +203,13 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
+  Widget selectedCampaignBox() {
+    return Container(
+      color: Colors.white,
+      child: Center(child: Text("${widget.selectedCampaign!.name!}"))
+    );
+  }
+
   Widget projectDetailsBox() {
     return Container(
       color: Colors.white,
@@ -256,7 +265,11 @@ class _CampaignsPageState extends State<CampaignsPage> {
   }
 
   void selectCampaign(Campaign campaign) {
-    print("Selected Campaign: ${campaign.name}");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user, project: widget.project, selectedCampaign: campaign))
+    );
   }
 
   void deleteProject() async {
@@ -309,7 +322,13 @@ class _CampaignsPageState extends State<CampaignsPage> {
                         fontSize: 15,
                         color: Colors.black,
                         fontWeight: FontWeight.bold))
-                    : Text("Project's Campaigns",
+                    : widget.selectedCampaign == null
+                ? Text("Project's Campaigns",
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold))
+                    : Text("Campaign: ${widget.selectedCampaign!.name!}",
                     style: TextStyle(
                         fontSize: 15,
                         color: Colors.black,
