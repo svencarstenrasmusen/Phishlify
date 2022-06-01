@@ -17,6 +17,7 @@ const campaignsByProjectId = require('./routes/campaignsByProjectId');
 const deleteCampaignRoute = require('./routes/deleteCampaign');
 const emailsAdd = require('./routes/emailsAdd');
 const emailsDelete = require('./routes/emailsDelete');
+const emailsByCampaign = require('./routes/emailsByCampaignId');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -33,6 +34,7 @@ app.use('/campaigns/delete', deleteCampaignRoute);
 app.use('/projects/delete', deleteProjectRoute);
 app.use('/emails/add', emailsAdd);
 app.use('/emails/delete', emailsDelete);
+app.use('/emails/byCampaign/:campaignId', emailsByCampaign);
 
 // start server 
 app.listen(port, () => {
