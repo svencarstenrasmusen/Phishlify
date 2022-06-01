@@ -400,10 +400,10 @@ class _CampaignsPageState extends State<CampaignsPage> {
     _toggleLoading();
   }
 
-  void removeEmail(String email) {
-    setState(() {
-      emails.remove(email);
-    });
+  void removeEmail(String email) async {
+    _toggleLoading();
+    await dataProvider.deleteEmail(email, widget.selectedCampaign!.id!);
+    _toggleLoading();
   }
 
   void selectCampaign(Campaign campaign) {
