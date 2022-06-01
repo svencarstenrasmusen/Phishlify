@@ -385,7 +385,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
               iconSize: 15,
               icon: Icon(Icons.remove_circle, color: Colors.red),
               onPressed: () {
-                removeEmail(email);
+                showConfirmDeleteDialog(email);
               },
             )
           ],
@@ -830,6 +830,41 @@ class _CampaignsPageState extends State<CampaignsPage> {
     }
     String dateString = "$dayFormatted.$monthFormatted.${endDate!.year}";
     return dateString;
+  }
+
+  showConfirmDeleteDialog(String email) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.warning, size: 40, color: Colors.red),
+                SizedBox(height: 20),
+                Text("Are you sure you want to delete the email: $email?")
+              ],
+            ),
+            actions: [
+              MaterialButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              MaterialButton(
+                child: Text('Yes, remove', style: TextStyle(color: Colors.white)),
+                color: Colors.red,
+                onPressed: () {
+                  removeEmail(email);
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        }
+    );
   }
 
   Widget menuBar() {
