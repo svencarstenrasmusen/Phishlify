@@ -7,6 +7,8 @@ var nodemailer = require('nodemailer');
 router.post('/', (req, res) => {
     console.log('campaign route creation', req.body);
     let email = req.body.email;
+    let subject = req.body.subject;
+    let text = req.body.text;
 
     var transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -20,9 +22,9 @@ router.post('/', (req, res) => {
 
     var mailOptions = {
         from: 'sven.the.eagle@gmail.com',
-        to: 'sven@home.lu',
-        subject: 'testPhishlify123',
-        text: 'I hope this worked.'
+        to: email,
+        subject: subject,
+        text: text
     };
 
     transporter.sendMail(mailOptions, function(error, info) {
