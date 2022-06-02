@@ -10,15 +10,17 @@ router.post('/', (req, res) => {
 
     var transporter = nodemailer.createTransport({
         service: 'gmail',
+        requireTLS: true,
+
         auth: {
-            user: 'phishlify@gmail.com',
-            pass: 'random123random'
+            user: 'sven.the.eagle@gmail.com',
+            pass: ''
         }
     });
 
     var mailOptions = {
-        from: 'phishlify@gmail.com',
-        to: 'sven.the.eagle@gmail.com',
+        from: 'sven.the.eagle@gmail.com',
+        to: 'sven@home.lu',
         subject: 'testPhishlify123',
         text: 'I hope this worked.'
     };
@@ -26,8 +28,10 @@ router.post('/', (req, res) => {
     transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
             console.log(error);
+            res.status(400).send(false);
         } else {
             console.log('Email sent: ', + info.response);
+            res.status(200).send(true);
         }
     });
 
