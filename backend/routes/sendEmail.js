@@ -5,7 +5,7 @@ const connection = require('../db');
 var nodemailer = require('nodemailer');
 
 router.post('/', (req, res) => {
-    console.log('campaign route creation', req.body);
+    console.log('email sending route', req.body);
     let email = req.body.email;
     let subject = req.body.subject;
     let text = req.body.text;
@@ -32,7 +32,7 @@ router.post('/', (req, res) => {
             console.log(error);
             res.status(400).send(false);
         } else {
-            console.log('Email sent: ', + info.response);
+            console.log('Email sent to: ', + email);
             res.status(200).send(true);
         }
     });
