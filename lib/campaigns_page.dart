@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
 import 'package:phishing_framework/custom_widgets/campaign_tile.dart';
@@ -28,7 +31,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
   List<Project>? projectList = [];
   List<Email> emails = [];
   Campaign? campaign;
-  bool isLoading = false;
+  bool _isLoading = false;
 
   //CONTROLLERS
   TextEditingController campaignNameController = TextEditingController();
@@ -37,12 +40,12 @@ class _CampaignsPageState extends State<CampaignsPage> {
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController emailTextController = TextEditingController();
+  TextEditingController emailSubjectController = TextEditingController();
 
   //DATETIMES
   DateTime? startDate;
   DateTime? endDate;
-
-  bool _isLoading = false;
 
   List<String> targetEmails = [];
 
@@ -128,6 +131,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 ],
               )
                   : Container(),
+              _isLoading ? Center(child: CircularProgressIndicator()) : Container()
             ],
           )
       ),
@@ -153,7 +157,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   void _toggleLoading() {
     setState(() {
-      isLoading = !isLoading;
+      _isLoading = !_isLoading;
     });
   }
 
@@ -277,6 +281,10 @@ class _CampaignsPageState extends State<CampaignsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text("EMAIL SUBJECT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 5),
+                subjectTextBox(),
+                SizedBox(height: 5),
                 Text("EMAIL TEXT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
                 SizedBox(height: 5),
                 Expanded(child: emailTextBox()),
@@ -366,8 +374,14 @@ class _CampaignsPageState extends State<CampaignsPage> {
   MaterialButton sendEmailButton() {
     return MaterialButton(
       color: Colors.lightGreenAccent,
-      onPressed: () {
-        print("tapped send email");
+      onPressed: () async {
+        _toggleLoading();
+        for (var element in emails) {
+          await dataProvider.sendEmail(element.email!, emailSubjectController.text, emailTextController.text);
+          sleep(Duration(milliseconds: 100));
+        }
+        _toggleLoading();
+        showEmailSendSuccess();
       },
       height: 25,
       child: Text("Send Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
@@ -719,7 +733,17 @@ class _CampaignsPageState extends State<CampaignsPage> {
     return Container(
       color: Colors.grey[200],
       child: TextFormField(
+        controller: emailTextController,
       ),
+    );
+  }
+
+  Widget subjectTextBox() {
+    return Container(
+      color: Colors.grey[200],
+      child: TextFormField(
+        controller: emailSubjectController,
+      )
     );
   }
 
@@ -895,6 +919,25 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 },
               )
             ],
+          );
+        }
+    );
+  }
+
+  showEmailSendSuccess() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle, size: 60, color: Colors.green),
+                SizedBox(height: 20),
+                Text("Email(s) were sent successfully!"),
+              ],
+            ),
           );
         }
     );
