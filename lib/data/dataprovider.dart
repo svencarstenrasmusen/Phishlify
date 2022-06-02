@@ -10,11 +10,11 @@ class DataProvider {
   ResponseParser parser = ResponseParser();
 
   //static final String kHost = '127.0.0.1:3000';
-  static final String kHost = '192.168.0.199:3000'; //for pc to laptop
+  static final String kHost = 'sv.home.lu'; //for pc to laptop
   static final String kBasePath = '/';
   
   //TODO: change to secure channel HTTPS!
-  Uri kBaseUrl = new Uri.http(kHost, kBasePath);
+  Uri kBaseUrl = new Uri.https(kHost, kBasePath);
 
   var headers = {
     'accept': 'application/json',
@@ -73,6 +73,7 @@ class DataProvider {
       "startDate": _formatDate(project.startDate),
       "endDate": _formatDate(project.endDate),
       "language": project.language,
+      "customer": project.customer,
       "email": email
     };
 
@@ -84,6 +85,55 @@ class DataProvider {
     } else {
       return false;
       //throw Exception('Error on creating project. Response: ${response.body}');
+    }
+  }
+
+  Future<bool> deleteProject(int projectId) async {
+    var body = {
+      "projectId": projectId
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/projects/delete/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on creating campaign. Response: ${response.body}');
+    }
+  }
+
+  Future<bool> deleteEmail(String email, int campaignId) async {
+    var body = {
+      "email": email,
+      "campaignId": campaignId
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/emails/delete/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on deleting email. Response: ${response.body}');
+    }
+  }
+
+  Future<bool> deleteCampaign(int campaignId) async {
+    var body = {
+      "campaignId": campaignId
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/campaigns/delete/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on creating campaign. Response: ${response.body}');
     }
   }
 
@@ -108,6 +158,40 @@ class DataProvider {
     }
   }
 
+  Future<bool> addEmail(String email, int campaignId) async {
+    var body = {
+      "email": email,
+      "campaignId": campaignId
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/emails/add/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on adding email. Response: ${response.body}');
+    }
+  }
+
+  Future<bool> sendEmail(String email, String subject, String text) async {
+    var body = {
+      "email": email,
+      "subject": subject,
+      "text": text
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/sendEmail/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<List<Project>> getProjects(String email) async {
     final response = await http.get(kBaseUrl.replace(path: '/projects/$email'), headers: headers);
 
@@ -115,6 +199,26 @@ class DataProvider {
       return parser.parseListOfProjects(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load all projects');
+    }
+  }
+
+  Future<Project> getProjectById(int projectId) async {
+    final response = await http.get(kBaseUrl.replace(path: '/project/$projectId'), headers: headers);
+
+    if (response.statusCode == 200) {
+      return parser.parseProject(jsonDecode(response.body)[0]);
+    } else {
+      throw Exception('Failed to load all projects');
+    }
+  }
+
+  Future<List<Email>> getEmailsByCampaign(int campaignId) async {
+    final response = await http.get(kBaseUrl.replace(path: '/emails/byCampaign/$campaignId'), headers: headers);
+
+    if (response.statusCode == 200) {
+      return parser.parseListOfEmails(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load all emails');
     }
   }
 

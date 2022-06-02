@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const connection = require('../db');
+const bcrypt = require('bcryptjs');
+
+const saltRounds = 10;
 
 router.post('/', (req, res) => {
     console.log('register 1 ', req.body);
@@ -16,18 +19,27 @@ router.post('/', (req, res) => {
             res.send(409);
         }
         else {
-            
-            if(name !== '' && email !== '' && password !==''){
-                let sql_query = `INSERT INTO user (name, email, password)
-                VALUES ("${name}", "${email}", ${password})`;
-                connection.query(sql_query, function (err, results) {
-                    if (err) throw err;
-                    console.log('result ', results);
-                    res.status(200).send(results);
-                });
-            } else {
-                res.send('Fields cannot be empty!')
-            }
+            bcrypt.genSalt(saltRounds, function (encErr, salt) {
+                if (encErr) {
+                    console.error('Error: on hashing password.');
+                    res.status(400).send('Error: on hashing password.');
+                } else {
+                    console.log('hashing...');
+                    bcrypt.hash(password, salt, function (hashErr, hash) {
+                        if (name !== '' && email !== '' && password !== '') {
+                            let sql_query = `INSERT INTO user (name, email, password)
+                                            VALUES ("${name}", "${email}", "${hash}")`;
+                            connection.query(sql_query, function (err, results) {
+                                if (err) throw err;
+                                console.log('result ', results);
+                                res.status(200).send(results);
+                            });
+                        } else {
+                            res.send('Fields cannot be empty!')
+                        }
+                    })
+                }
+            });
         }
     });
 });

@@ -26,7 +26,8 @@ class ResponseParser {
       domain: jsonProject['domain'],
       startDate: formatDate(jsonProject['startDate']),
       endDate: formatDate(jsonProject['endDate']),
-      language: jsonProject['language']
+      language: jsonProject['language'],
+      customer: jsonProject['customer']
     );
   }
 
@@ -49,6 +50,18 @@ class ResponseParser {
 
   List<Campaign> parseListOfCampaigns(List jsonList) {
     return jsonList.map((jsonCampaign) => parseCampaign(jsonCampaign)).toList();
+  }
+
+  //EMAIL PARSER
+  Email parseEmail(Map jsonEmail) {
+    return Email(
+      email: jsonEmail['email'],
+      campaignId: jsonEmail['campaignId'],
+    );
+  }
+
+  List<Email> parseListOfEmails(List jsonList) {
+    return jsonList.map((jsonEmail) => parseEmail(jsonEmail)).toList();
   }
 
   DateTime formatDate(String dateString) {

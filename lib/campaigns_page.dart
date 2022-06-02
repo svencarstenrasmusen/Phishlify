@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
 import 'package:phishing_framework/custom_widgets/campaign_tile.dart';
@@ -10,8 +14,10 @@ class CampaignsPage extends StatefulWidget {
   final String title;
   final User user;
   final Project? project;
+  final Campaign? selectedCampaign;
+  final Function(Project)? removeCallback;
 
-  const CampaignsPage({Key? key, this.project, required this.title, required this.user}) : super(key: key);
+  const CampaignsPage({Key? key, this.project, required this.title, required this.user, this.selectedCampaign, this.removeCallback}) : super(key: key);
 
   @override
   State<CampaignsPage> createState() => _CampaignsPageState();
@@ -23,8 +29,9 @@ class _CampaignsPageState extends State<CampaignsPage> {
   DataProvider dataProvider = DataProvider();
   List<Campaign>? campaignsList = [];
   List<Project>? projectList = [];
+  List<Email> emails = [];
   Campaign? campaign;
-  bool isLoading = false;
+  bool _isLoading = false;
 
   //CONTROLLERS
   TextEditingController campaignNameController = TextEditingController();
@@ -32,11 +39,23 @@ class _CampaignsPageState extends State<CampaignsPage> {
   TextEditingController domainController = TextEditingController();
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController emailTextController = TextEditingController();
+  TextEditingController emailSubjectController = TextEditingController();
+
+  //DATETIMES
+  DateTime? startDate;
+  DateTime? endDate;
 
   List<String> targetEmails = [];
 
   //KEYS
   final GlobalKey<FormState> _createCampaignKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +88,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                 children: [
                                   titleWidget(),
                                   SizedBox(height: 30),
-                                  Expanded(
+                                  widget.selectedCampaign == null
+                                  ? Expanded(
                                     child: Column(
                                       children: [
                                         Row(
@@ -77,6 +97,13 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                             Expanded(child: widget.project == null ? Container() : projectDetailsBox())
                                           ],
                                         ),
+                                        widget.project == null
+                                          ? Container()
+                                          : Container(
+                                            color: Colors.white,
+                                            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                            child: Divider(thickness: 1, color: Colors.grey)),
+                                        listHeader(),
                                         Container(
                                             color: Colors.white,
                                             padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -84,7 +111,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
                                         Expanded(child: campaignsBox())
                                       ],
                                     ),
-                                  ),
+                                  )
+                                  : Expanded(child: selectedCampaignBox())
                                 ],
                               ),
                             ),
@@ -102,7 +130,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
                   campaignCreationForm(width / 2.5)
                 ],
               )
-                  : Container()
+                  : Container(),
+              _isLoading ? Center(child: CircularProgressIndicator()) : Container()
             ],
           )
       ),
@@ -115,8 +144,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
       name: campaignNameController.text,
       domain: domainController.text,
       description: descriptionController.text,
-      endDate: DateTime.parse(endDateController.text),
-      startDate: DateTime.parse(startDateController.text),
+      endDate: endDate,
+      startDate: startDate,
     );
   }
 
@@ -128,14 +157,40 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   void _toggleLoading() {
     setState(() {
-      isLoading = !isLoading;
+      _isLoading = !_isLoading;
     });
+  }
+
+  void deleteCampaign(Campaign campaign) async {
+    bool flag = await dataProvider.deleteCampaign(campaign.id!);
+    if (flag) {
+      setState(() {
+        campaignsList!.remove(campaign);
+      });
+    }
+  }
+
+  Widget listHeader() {
+    return Container(
+      color: Colors.white,
+      child: ListTile(
+        dense: true,
+        title: Row(
+          children: [
+            Expanded(child: Text("CAMPAIGN NAME")),
+            Expanded(child: Text("START DATE")),
+            Expanded(child: Text("END DATE")),
+            Expanded(child: Text("URL")),
+            Expanded(child: Text("ACTIONS", textAlign: TextAlign.center)),
+          ],
+        ),
+      )
+    );
   }
 
   Widget campaignsBox() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: FutureBuilder<List<Campaign>>(
         future: widget.project == null
             //If project is NULL then no project was selected -> show ALL campaigns
@@ -144,15 +199,11 @@ class _CampaignsPageState extends State<CampaignsPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             campaignsList = snapshot.data;
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
+            return ListView.builder(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               itemCount: campaignsList!.length,
               itemBuilder: (BuildContext context, int index) {
-                return CampaignTile(campaign: campaignsList![index]);
+                return CampaignTile(campaign: campaignsList![index], removeCallback: deleteCampaign, onClick: selectCampaign);
               },
             );
           } else if (snapshot.hasError) {
@@ -164,45 +215,336 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
+  Widget selectedCampaignBox() {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: widget.project != null
+        ? Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("DETAILS:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.project!.personInCharge}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.selectedCampaign!.formattedStartDate()}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.selectedCampaign!.formattedStartDate()}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Description: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.selectedCampaign!.description}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.selectedCampaign!.domain}"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Customer: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("${widget.project!.customer}"),
+                  ],
+                ),
+                SizedBox(height: 15),
+                Text("TARGET EMAILS:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                Expanded(child: emailList()),
+                addEmailButton()
+              ],
+            ),
+          ),
+          SizedBox(width: 5),
+          Container(
+            color: Colors.grey,
+            width: 2,
+          ),
+          SizedBox(width: 5),
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("EMAIL SUBJECT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 5),
+                subjectTextBox(),
+                SizedBox(height: 5),
+                Text("EMAIL TEXT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 5),
+                Expanded(child: emailTextBox()),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: sendEmailButton(),
+                )
+              ],
+            ),
+          )
+        ],
+      )
+      : FutureBuilder<Project>(
+        future: dataProvider.getProjectById(widget.selectedCampaign!.projectId!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Project project = snapshot.data!;
+            return Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("DETAILS:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${project.personInCharge}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${widget.selectedCampaign!.formattedStartDate()}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${widget.selectedCampaign!.formattedStartDate()}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Description: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${widget.selectedCampaign!.description}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${widget.selectedCampaign!.domain}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Customer: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${project.customer}"),
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Text("TARGET EMAILS:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                      Expanded(child: emailList()),
+                      addEmailButton()
+                    ],
+                  ),
+                ),
+                SizedBox(width: 5),
+                Container(
+                  color: Colors.grey,
+                  width: 2,
+                ),
+                SizedBox(width: 5),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("EMAIL SUBJECT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                      SizedBox(height: 5),
+                      subjectTextBox(),
+                      SizedBox(height: 5),
+                      Text("EMAIL TEXT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                      SizedBox(height: 5),
+                      Expanded(child: emailTextBox()),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: sendEmailButton(),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'));
+          }
+          return const Center(child: CircularProgressIndicator());
+        }
+      )
+    );
+  }
+
   Widget projectDetailsBox() {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: Column(
+      child: Row(
         children: [
-          Row(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Project Name: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.name}"),
+              Row(
+                children: [
+                  Text("Project Name: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.name}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.personInCharge}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Project Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.formattedStartDate()}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Project End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.formattedEndDate()}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Project Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.domain}"),
+                ],
+              ),
+              Row(
+                children: [
+                  Text("Customer: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("${widget.project!.customer}"),
+                ],
+              ),
             ],
           ),
-          Row(
-            children: [
-              Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.personInCharge}"),
-            ],
-          ),
-          Row(
-            children: [
-              Text("Project Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.formattedStartDate()}"),
-            ],
-          ),
-          Row(
-            children: [
-              Text("Project End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.formattedEndDate()}"),
-            ],
-          ),
-          Row(
-            children: [
-              Text("Project Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
-              Text("${widget.project!.domain}"),
-            ],
-          ),
+          Spacer(),
+          IconButton(
+            icon: Icon(Icons.delete_forever_outlined, color: Colors.red),
+            onPressed: () {
+              deleteProject();
+            } ,
+          )
         ],
+      )
+    );
+  }
+
+  MaterialButton addEmailButton() {
+    return MaterialButton(
+      color: Colors.lightGreenAccent,
+      onPressed: () {
+        addEmailDialog();
+      },
+      height: 25,
+      child: Text("Add Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  MaterialButton sendEmailButton() {
+    return MaterialButton(
+      color: Colors.lightGreenAccent,
+      onPressed: () async {
+        _toggleLoading();
+        for (var element in emails) {
+          await dataProvider.sendEmail(element.email!, emailSubjectController.text, emailTextController.text);
+        }
+        _toggleLoading();
+        showEmailSendSuccess();
+      },
+      height: 25,
+      child: Text("Send Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget emailList() {
+    return Container(
+      child: FutureBuilder<List<Email>>(
+        future: dataProvider.getEmailsByCampaign(widget.selectedCampaign!.id!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            emails = snapshot.data!;
+            return ListView.builder(
+              padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+              itemCount: emails.length,
+              itemBuilder: (BuildContext context, int index) {
+                return emailTile(emails[index].email!);
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'));
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
       ),
     );
+  }
+
+  Widget emailTile(String email) {
+    return Card(
+      margin: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+      child: ListTile(
+        dense: true,
+        title: Row(
+          children: [
+            Text(email),
+            Spacer(),
+            IconButton(
+              iconSize: 15,
+              icon: Icon(Icons.remove_circle, color: Colors.red),
+              onPressed: () {
+                showConfirmDeleteDialog(email);
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void addEmail(String email) async {
+    _toggleLoading();
+    await dataProvider.addEmail(email, widget.selectedCampaign!.id!);
+    _toggleLoading();
+  }
+
+  void removeEmail(String email) async {
+    _toggleLoading();
+    await dataProvider.deleteEmail(email, widget.selectedCampaign!.id!);
+    _toggleLoading();
+  }
+
+  void selectCampaign(Campaign campaign) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user, project: widget.project, selectedCampaign: campaign))
+    );
+  }
+
+  void deleteProject() async {
+    widget.removeCallback!(widget.project!);
+    Navigator.of(context).pop();
   }
 
   Widget userAvatar() {
@@ -250,7 +592,13 @@ class _CampaignsPageState extends State<CampaignsPage> {
                         fontSize: 15,
                         color: Colors.black,
                         fontWeight: FontWeight.bold))
-                    : Text("Project's Campaigns",
+                    : widget.selectedCampaign == null
+                ? Text("Project's Campaigns",
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold))
+                    : Text("Campaign: ${widget.selectedCampaign!.name!}",
                     style: TextStyle(
                         fontSize: 15,
                         color: Colors.black,
@@ -389,61 +737,9 @@ class _CampaignsPageState extends State<CampaignsPage> {
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("Start Date", style: TextStyle(fontSize: 15, color: Colors.grey)),
-                            SizedBox(height: 5),
-                            Expanded(
-                              child: TextFormField(
-                                controller: startDateController,
-                                decoration: const InputDecoration(
-                                    labelText: "Enter a start date. Format YYYY-MM-DD.",
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(7))),
-                                    errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.red, width: 5))),
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return "Please enter a start date.";
-                                  }
-                                },
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      Expanded(child: startDateButton()),
                       SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("End Date", style: TextStyle(fontSize: 15, color: Colors.grey)),
-                            SizedBox(height: 5),
-                            Expanded(
-                              child: TextFormField(
-                                controller: endDateController,
-                                decoration: const InputDecoration(
-                                    labelText: "Enter a end date. Format YYYY-MM-DD.",
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(7))),
-                                    errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.red, width: 5))),
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return "Please enter a end date.";
-                                  }
-                                },
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      Expanded(child: endDateButton()),
                     ],
                   ),
                 ),
@@ -491,6 +787,248 @@ class _CampaignsPageState extends State<CampaignsPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget startDateButton() {
+    return Container(
+        height: 50,
+        child: MaterialButton(
+          color: Colors.lightGreenAccent,
+          hoverColor: Colors.greenAccent,
+          child: startDate == null
+              ? Text("Pick A Start Date", style: TextStyle(color: Colors.black), textAlign: TextAlign.center)
+              : Text("Start Date: ${formattedStartDate()}", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
+          onPressed: () => chooseStartDate(),
+        )
+    );
+  }
+
+  Widget endDateButton() {
+    return Container(
+        height: 50,
+        child: MaterialButton(
+          color: Colors.lightGreenAccent,
+          hoverColor: Colors.greenAccent,
+          child: endDate == null
+              ? Text("Pick An End Date", style: TextStyle(color: Colors.black), textAlign: TextAlign.center)
+              : Text("End Date: ${formattedEndDate()}", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
+          onPressed: () => chooseEndDate(),
+        )
+    );
+  }
+
+  Widget emailTextBox() {
+    return Container(
+      color: Colors.grey[200],
+      child: TextFormField(
+        controller: emailTextController,
+      ),
+    );
+  }
+
+  Widget subjectTextBox() {
+    return Container(
+      color: Colors.grey[200],
+      child: TextFormField(
+        controller: emailSubjectController,
+      )
+    );
+  }
+
+  Future<void> chooseStartDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: widget.project!.startDate!,
+      firstDate: widget.project!.startDate!,
+      lastDate:widget.project!.endDate!,
+    );
+    if (pickedDate != null && endDate == null) {
+      setState(() {
+        startDate = pickedDate;
+      });
+    } else if (pickedDate != null &&
+        endDate != null &&
+        pickedDate.isBefore(endDate!)) {
+      setState(() {
+        startDate = pickedDate;
+      });
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return SimpleDialog(
+              title: Text(
+                  "Please select a start date that is before the selected end date."),
+              children: <Widget>[
+                TextButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    }
+  }
+
+  Future<void> chooseEndDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: widget.project!.startDate!,
+      firstDate: widget.project!.startDate!,
+      lastDate:widget.project!.endDate!,
+    );
+    if (pickedDate != null &&
+        startDate != null &&
+        pickedDate.isAfter(startDate!)) {
+      setState(() {
+        endDate = pickedDate;
+      });
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return SimpleDialog(
+              title: Text(
+                  "Please select a start date first and be sure that the end date is after the start date."),
+              children: <Widget>[
+                TextButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    }
+  }
+
+  addEmailDialog() {
+    emailController.text = "";
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Please Enter an Email'),
+            content: TextField(
+              controller: emailController,
+              textAlignVertical: TextAlignVertical.center,
+              decoration: InputDecoration(hintText: "Email"),
+            ),
+            actions: [
+              MaterialButton(
+                  onPressed: () {
+                    _dismissDialog();
+                  },
+                  color: Colors.white,
+                  child: Text('Cancel')
+              ),
+              MaterialButton(
+                  onPressed: () {
+                    addEmail(emailController.text);
+                    _dismissDialog();
+                  },
+                  color: Colors.blue,
+                  child: Text('Add Email', style: TextStyle(color: Colors.white))
+              )
+            ],
+          );
+        }
+    );
+  }
+
+  _dismissDialog() {
+    Navigator.pop(context);
+  }
+
+  String formattedStartDate() {
+    String dayFormatted = "0";
+    String monthFormatted = "0";
+    if(startDate!.day < 10) {
+      dayFormatted = dayFormatted + "${startDate!.day}";
+    } else {
+      dayFormatted = "${startDate!.day}";
+    }
+    if(startDate!.month < 10) {
+      monthFormatted = monthFormatted + "${startDate!.month}";
+    } else {
+      monthFormatted = "${startDate!.month}";
+    }
+    String dateString = "$dayFormatted.$monthFormatted.${startDate!.year}";
+    return dateString;
+  }
+
+  String formattedEndDate() {
+    String dayFormatted = "0";
+    String monthFormatted = "0";
+    if(endDate!.day < 10) {
+      dayFormatted = dayFormatted + "${endDate!.day}";
+    } else {
+      dayFormatted = "${endDate!.day}";
+    }
+    if(endDate!.month < 10) {
+      monthFormatted = monthFormatted + "${endDate!.month}";
+    } else {
+      monthFormatted = "${endDate!.month}";
+    }
+    String dateString = "$dayFormatted.$monthFormatted.${endDate!.year}";
+    return dateString;
+  }
+
+  showConfirmDeleteDialog(String email) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.warning, size: 40, color: Colors.red),
+                SizedBox(height: 20),
+                Text("Are you sure you want to delete the email: $email?")
+              ],
+            ),
+            actions: [
+              MaterialButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              MaterialButton(
+                child: Text('Yes, remove', style: TextStyle(color: Colors.white)),
+                color: Colors.red,
+                onPressed: () {
+                  removeEmail(email);
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        }
+    );
+  }
+
+  showEmailSendSuccess() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle, size: 60, color: Colors.green),
+                SizedBox(height: 20),
+                Text("Email(s) were sent successfully!"),
+              ],
+            ),
+          );
+        }
     );
   }
 
