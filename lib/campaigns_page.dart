@@ -219,7 +219,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: Row(
+      child: widget.project != null
+        ? Row(
         children: [
           Expanded(
             child: Column(
@@ -296,6 +297,95 @@ class _CampaignsPageState extends State<CampaignsPage> {
             ),
           )
         ],
+      )
+      : FutureBuilder<Project>(
+        future: dataProvider.getProjectById(widget.selectedCampaign!.projectId!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            Project project = snapshot.data!;
+            return Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("DETAILS:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Text("Person In Charge: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${project.personInCharge}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${widget.selectedCampaign!.formattedStartDate()}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${widget.selectedCampaign!.formattedStartDate()}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Description: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${widget.selectedCampaign!.description}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Domain: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${widget.selectedCampaign!.domain}"),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Customer: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${project.customer}"),
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Text("TARGET EMAILS:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                      Expanded(child: emailList()),
+                      addEmailButton()
+                    ],
+                  ),
+                ),
+                SizedBox(width: 5),
+                Container(
+                  color: Colors.grey,
+                  width: 2,
+                ),
+                SizedBox(width: 5),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("EMAIL SUBJECT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                      SizedBox(height: 5),
+                      subjectTextBox(),
+                      SizedBox(height: 5),
+                      Text("EMAIL TEXT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                      SizedBox(height: 5),
+                      Expanded(child: emailTextBox()),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: sendEmailButton(),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('${snapshot.error}'));
+          }
+          return const Center(child: CircularProgressIndicator());
+        }
       )
     );
   }
@@ -378,7 +468,6 @@ class _CampaignsPageState extends State<CampaignsPage> {
         _toggleLoading();
         for (var element in emails) {
           await dataProvider.sendEmail(element.email!, emailSubjectController.text, emailTextController.text);
-          sleep(Duration(milliseconds: 100));
         }
         _toggleLoading();
         showEmailSendSuccess();

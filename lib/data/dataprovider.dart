@@ -10,11 +10,11 @@ class DataProvider {
   ResponseParser parser = ResponseParser();
 
   //static final String kHost = '127.0.0.1:3000';
-  static final String kHost = '172.25.2.113:3000'; //for pc to laptop
+  static final String kHost = 'sv.home.lu'; //for pc to laptop
   static final String kBasePath = '/';
   
   //TODO: change to secure channel HTTPS!
-  Uri kBaseUrl = new Uri.http(kHost, kBasePath);
+  Uri kBaseUrl = new Uri.https(kHost, kBasePath);
 
   var headers = {
     'accept': 'application/json',
@@ -197,6 +197,16 @@ class DataProvider {
 
     if (response.statusCode == 200) {
       return parser.parseListOfProjects(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load all projects');
+    }
+  }
+
+  Future<Project> getProjectById(int projectId) async {
+    final response = await http.get(kBaseUrl.replace(path: '/project/$projectId'), headers: headers);
+
+    if (response.statusCode == 200) {
+      return parser.parseProject(jsonDecode(response.body)[0]);
     } else {
       throw Exception('Failed to load all projects');
     }
