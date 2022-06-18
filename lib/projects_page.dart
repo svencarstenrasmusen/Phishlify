@@ -221,6 +221,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
           const SizedBox(height: 10),
           menuButton(
               Icons.description_outlined, "API Document", "/dashboard", false),
+          menuButton(
+              Icons.logout, "Logout", "/", false),
         ],
       ),
     );
@@ -258,6 +260,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
               MaterialPageRoute(
                   builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user, project: null)),
             );
+            break;
+          case '/':
+          //remove all previous pages to disable back-button pressing back into account.
+            Navigator.pushNamedAndRemoveUntil(context, '/', ModalRoute.withName('/'));
             break;
           case '/projects':
             break;

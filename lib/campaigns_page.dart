@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
 import 'package:phishing_framework/custom_widgets/campaign_tile.dart';
+import 'package:phishing_framework/main.dart';
 
 import 'dashboard_page.dart';
 import 'projects_page.dart';
@@ -1065,6 +1066,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
           const SizedBox(height: 10),
           menuButton(
               Icons.description_outlined, "API Document", "/dashboard", false),
+          menuButton(
+              Icons.logout, "Logout", "/", false),
         ],
       ),
     );
@@ -1102,6 +1105,10 @@ class _CampaignsPageState extends State<CampaignsPage> {
               MaterialPageRoute(
                   builder: (context) => ProjectsPage(title: "Projects", user: widget.user)),
             );
+            break;
+          case '/':
+            //remove all previous pages to disable back-button pressing back into account.
+            Navigator.pushNamedAndRemoveUntil(context, '/', ModalRoute.withName('/'));
             break;
           case '/campaigns':
             break;
