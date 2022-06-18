@@ -64,6 +64,7 @@ class _DashboardPageState extends State<DashboardPage> {
           menuButton(Icons.article_outlined, "User Guide", "/dashboard", false),
           const SizedBox(height: 10),
           menuButton(Icons.description_outlined, "API Document", "/dashboard", false),
+          Spacer(),
           menuButton(
               Icons.logout, "Logout", "/", false),
         ],

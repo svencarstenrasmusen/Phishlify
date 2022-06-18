@@ -221,6 +221,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
           const SizedBox(height: 10),
           menuButton(
               Icons.description_outlined, "API Document", "/dashboard", false),
+          Spacer(),
           menuButton(
               Icons.logout, "Logout", "/", false),
         ],

@@ -1066,6 +1066,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
           const SizedBox(height: 10),
           menuButton(
               Icons.description_outlined, "API Document", "/dashboard", false),
+          Spacer(),
           menuButton(
               Icons.logout, "Logout", "/", false),
         ],
