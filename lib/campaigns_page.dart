@@ -823,6 +823,9 @@ class _CampaignsPageState extends State<CampaignsPage> {
     return Container(
       color: Colors.grey[200],
       child: TextFormField(
+        maxLines: null,
+        minLines: null,
+        expands: true,
         controller: emailTextController,
       ),
     );
