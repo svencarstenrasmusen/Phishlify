@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:phishing_framework/dashboard_page.dart';
 import 'package:phishing_framework/register_page.dart';
@@ -52,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool rememberMe = false;
   bool isLoading = false;
+  bool isHovering = false;
 
   User? user;
 
@@ -173,10 +175,28 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       Text("Remember me", style: TextStyle(color: Colors.grey)),
                       Spacer(),
-                      GestureDetector(
-                        child: Text("Forgot Password?",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        onTap: () => print("Clicked forgot password."),
+                      MouseRegion(
+                        onEnter: (e) {
+                          setState(() {
+                            isHovering = true;
+                          });
+                        },
+                        onExit: (e) {
+                          setState(() {
+                            isHovering = false;
+                          });
+                        },
+                        child: SelectableText.rich(
+                            TextSpan(
+                                text: "Forgot Password?",
+                                style: TextStyle(fontWeight: FontWeight.bold, color: isHovering? Colors.blue : Colors.black),
+                                mouseCursor: SystemMouseCursors.click,
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    print("Clicked forgot password.");
+                                  },
+                            )
+                        ),
                       )
                     ],
                   ),
