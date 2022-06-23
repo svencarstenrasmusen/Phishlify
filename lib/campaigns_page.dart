@@ -44,15 +44,6 @@ class _CampaignsPageState extends State<CampaignsPage> {
   TextEditingController emailTextController = TextEditingController();
   TextEditingController emailSubjectController = TextEditingController();
 
-  //DATETIMES
-  DateTime? startDate;
-  DateTime? endDate;
-
-  bool hasStartDate = true;
-  bool hasEndDate = true;
-
-  List<String> targetEmails = [];
-
   //KEYS
   final GlobalKey<FormState> _createCampaignKey = GlobalKey<FormState>();
 
@@ -148,8 +139,6 @@ class _CampaignsPageState extends State<CampaignsPage> {
       name: campaignNameController.text,
       domain: domainController.text,
       description: descriptionController.text,
-      endDate: endDate,
-      startDate: startDate,
     );
   }
 
@@ -240,18 +229,6 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 ),
                 Row(
                   children: [
-                    Text("Start Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text("${widget.selectedCampaign!.formattedStartDate()}"),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text("End Date: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text("${widget.selectedCampaign!.formattedStartDate()}"),
-                  ],
-                ),
-                Row(
-                  children: [
                     Text("Description: ", style: TextStyle(fontWeight: FontWeight.bold)),
                     Text("${widget.selectedCampaign!.description}"),
                   ],
@@ -293,10 +270,13 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 Text("EMAIL TEXT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
                 SizedBox(height: 5),
                 Expanded(child: emailTextBox()),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: sendEmailButton(),
-                )
+                Row(
+                  children: [
+                    updateCampaignButton(),
+                    Spacer(),
+                    sendEmailButton()
+                  ],
+                ),
               ],
             ),
           )
@@ -376,10 +356,13 @@ class _CampaignsPageState extends State<CampaignsPage> {
                       Text("EMAIL TEXT:", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
                       SizedBox(height: 5),
                       Expanded(child: emailTextBox()),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: sendEmailButton(),
-                      )
+                      Row(
+                        children: [
+                          updateCampaignButton(),
+                          Spacer(),
+                          sendEmailButton()
+                        ],
+                      ),
                     ],
                   ),
                 )
@@ -462,6 +445,20 @@ class _CampaignsPageState extends State<CampaignsPage> {
       },
       height: 25,
       child: Text("Add Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  MaterialButton updateCampaignButton() {
+    return MaterialButton(
+      color: Colors.lightGreenAccent,
+      onPressed: () async {
+        _toggleLoading();
+        await dataProvider.updateCampaign(widget.selectedCampaign!.id!, emailSubjectController.text, emailTextController.text);
+        _toggleLoading();
+        showUpdateSuccess();
+      },
+      height: 25,
+      child: Text("Update Campaign Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -735,32 +732,6 @@ class _CampaignsPageState extends State<CampaignsPage> {
                   textAlign: TextAlign.left,
                 ),
               ),
-              SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Row(
-                  children: [
-                    Expanded(child: startDateButton()),
-                    SizedBox(width: 10),
-                    Expanded(child: endDateButton()),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                child: Container(
-                  child: Row(
-                    children: [
-                      hasStartDate
-                          ? Expanded(child: Container())
-                          : Expanded(child: Text("Please select a start date", style: TextStyle(color: Colors.red))),
-                      hasEndDate
-                          ? Expanded(child: Container())
-                          : Expanded(child: Text("Please select an end date", style: TextStyle(color: Colors.red))),
-                    ],
-                  ),
-                ),
-              ),
               Spacer(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -770,11 +741,8 @@ class _CampaignsPageState extends State<CampaignsPage> {
                       flex: 3,
                       child: MaterialButton(
                         onPressed: () {
-                          _checkIfStartDateSet();
-                          _checkIfEndDateSet();
                           // Check if all details for a campaign were entered
-                          if(_createCampaignKey.currentState!.validate()
-                              && hasStartDate && hasEndDate) {
+                          if(_createCampaignKey.currentState!.validate()) {
                             setCampaign();
                             _createCampaign();
                             setState(() {
@@ -814,35 +782,10 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
-  Widget startDateButton() {
-    return Container(
-        height: 50,
-        child: MaterialButton(
-          color: Colors.lightGreenAccent,
-          hoverColor: Colors.greenAccent,
-          child: startDate == null
-              ? Text("Pick A Start Date", style: TextStyle(color: Colors.black), textAlign: TextAlign.center)
-              : Text("Start Date: ${formattedStartDate()}", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
-          onPressed: () => chooseStartDate(),
-        )
-    );
-  }
-
-  Widget endDateButton() {
-    return Container(
-        height: 50,
-        child: MaterialButton(
-          color: Colors.lightGreenAccent,
-          hoverColor: Colors.greenAccent,
-          child: endDate == null
-              ? Text("Pick An End Date", style: TextStyle(color: Colors.black), textAlign: TextAlign.center)
-              : Text("End Date: ${formattedEndDate()}", style: TextStyle(color: Colors.black), textAlign: TextAlign.center),
-          onPressed: () => chooseEndDate(),
-        )
-    );
-  }
-
   Widget emailTextBox() {
+    if(widget.selectedCampaign!.subject != null) {
+      emailTextController.text = widget.selectedCampaign!.subject!;
+    }
     return Container(
       color: Colors.grey[200],
       child: TextFormField(
@@ -855,82 +798,15 @@ class _CampaignsPageState extends State<CampaignsPage> {
   }
 
   Widget subjectTextBox() {
+    if(widget.selectedCampaign!.subject != null) {
+      emailSubjectController.text = widget.selectedCampaign!.subject!;
+    }
     return Container(
       color: Colors.grey[200],
       child: TextFormField(
         controller: emailSubjectController,
       )
     );
-  }
-
-  Future<void> chooseStartDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: widget.project!.startDate!,
-      firstDate: widget.project!.startDate!,
-      lastDate:widget.project!.endDate!,
-    );
-    if (pickedDate != null && endDate == null) {
-      setState(() {
-        startDate = pickedDate;
-      });
-    } else if (pickedDate != null &&
-        endDate != null &&
-        pickedDate.isBefore(endDate!)) {
-      setState(() {
-        startDate = pickedDate;
-      });
-    } else {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return SimpleDialog(
-              title: Text(
-                  "Please select a start date that is before the selected end date."),
-              children: <Widget>[
-                TextButton(
-                  child: Text('Okay'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    }
-  }
-
-  Future<void> chooseEndDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: widget.project!.startDate!,
-      firstDate: widget.project!.startDate!,
-      lastDate:widget.project!.endDate!,
-    );
-    if (pickedDate != null &&
-        startDate != null &&
-        pickedDate.isAfter(startDate!)) {
-      setState(() {
-        endDate = pickedDate;
-      });
-    } else {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return SimpleDialog(
-              title: Text(
-                  "Please select a start date first and be sure that the end date is after the start date."),
-              children: <Widget>[
-                TextButton(
-                  child: Text('Okay'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    }
   }
 
   addEmailDialog() {
@@ -969,40 +845,6 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   _dismissDialog() {
     Navigator.pop(context);
-  }
-
-  String formattedStartDate() {
-    String dayFormatted = "0";
-    String monthFormatted = "0";
-    if(startDate!.day < 10) {
-      dayFormatted = dayFormatted + "${startDate!.day}";
-    } else {
-      dayFormatted = "${startDate!.day}";
-    }
-    if(startDate!.month < 10) {
-      monthFormatted = monthFormatted + "${startDate!.month}";
-    } else {
-      monthFormatted = "${startDate!.month}";
-    }
-    String dateString = "$dayFormatted.$monthFormatted.${startDate!.year}";
-    return dateString;
-  }
-
-  String formattedEndDate() {
-    String dayFormatted = "0";
-    String monthFormatted = "0";
-    if(endDate!.day < 10) {
-      dayFormatted = dayFormatted + "${endDate!.day}";
-    } else {
-      dayFormatted = "${endDate!.day}";
-    }
-    if(endDate!.month < 10) {
-      monthFormatted = monthFormatted + "${endDate!.month}";
-    } else {
-      monthFormatted = "${endDate!.month}";
-    }
-    String dateString = "$dayFormatted.$monthFormatted.${endDate!.year}";
-    return dateString;
   }
 
   showConfirmDeleteDialog(String email) async {
@@ -1059,32 +901,24 @@ class _CampaignsPageState extends State<CampaignsPage> {
     );
   }
 
-  /// Checks whether a start date was selected or not.
-  void _checkIfStartDateSet() {
-    if (startDate == null) {
-      setState(() {
-        hasStartDate = false;
-      });
-    } else {
-      setState(() {
-        hasStartDate = true;
-      });
-    }
+  showUpdateSuccess() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle, size: 60, color: Colors.green),
+                SizedBox(height: 20),
+                Text("Campaign email subject and content was updated successfully!"),
+              ],
+            ),
+          );
+        }
+    );
   }
-
-  /// Checks whether an end date was selected or not.
-  void _checkIfEndDateSet() {
-    if (startDate == null) {
-      setState(() {
-        hasEndDate = false;
-      });
-    } else {
-      setState(() {
-        hasEndDate = true;
-      });
-    }
-  }
-
 
   Widget menuBar() {
     return Container(
