@@ -9,12 +9,12 @@ import 'package:phishing_framework/data/models.dart';
 class DataProvider {
   ResponseParser parser = ResponseParser();
 
-  //static final String kHost = '127.0.0.1:3000';
-  static final String kHost = 'sv.home.lu'; //for pc to laptop
+  static final String kHost = '192.168.0.199:3000';
+  //static final String kHost = 'sv.home.lu'; //for pc to laptop
   static final String kBasePath = '/';
   
   //TODO: change to secure channel HTTPS!
-  Uri kBaseUrl = new Uri.https(kHost, kBasePath);
+  Uri kBaseUrl = new Uri.http(kHost, kBasePath);
 
   var headers = {
     'accept': 'application/json',
@@ -142,8 +142,6 @@ class DataProvider {
       "name": campaign.name,
       "projectId": campaign.projectId,
       "domain": campaign.domain,
-      "startDate": _formatDate(campaign.startDate),
-      "endDate": _formatDate(campaign.endDate),
       "description": campaign.description
     };
 
@@ -189,6 +187,24 @@ class DataProvider {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<bool> updateCampaign(int campaignId, String subject, String content) async {
+    var body = {
+      "campaignId": campaignId,
+      "subject": subject,
+      "content": content
+    };
+
+    var jsonBody = jsonEncode(body);
+    final response = await http.post(kBaseUrl.replace(path: '/campaigns/update/'), headers: headers, body: jsonBody);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+      //throw Exception('Error on adding email. Response: ${response.body}');
     }
   }
 
