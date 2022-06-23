@@ -48,6 +48,9 @@ class _CampaignsPageState extends State<CampaignsPage> {
   DateTime? startDate;
   DateTime? endDate;
 
+  bool hasStartDate = true;
+  bool hasEndDate = true;
+
   List<String> targetEmails = [];
 
   //KEYS
@@ -733,18 +736,32 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 ),
               ),
               SizedBox(height: 10),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Row(
+                  children: [
+                    Expanded(child: startDateButton()),
+                    SizedBox(width: 10),
+                    Expanded(child: endDateButton()),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: Container(
                   child: Row(
                     children: [
-                      Expanded(child: startDateButton()),
-                      SizedBox(width: 10),
-                      Expanded(child: endDateButton()),
+                      hasStartDate
+                          ? Expanded(child: Container())
+                          : Expanded(child: Text("Please select a start date", style: TextStyle(color: Colors.red))),
+                      hasEndDate
+                          ? Expanded(child: Container())
+                          : Expanded(child: Text("Please select an end date", style: TextStyle(color: Colors.red))),
                     ],
                   ),
                 ),
               ),
+              Spacer(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
@@ -753,11 +770,17 @@ class _CampaignsPageState extends State<CampaignsPage> {
                       flex: 3,
                       child: MaterialButton(
                         onPressed: () {
-                          setCampaign();
-                          _createCampaign();
-                          setState(() {
-                            createCampaign = false;
-                          });
+                          _checkIfStartDateSet();
+                          _checkIfEndDateSet();
+                          // Check if all details for a campaign were entered
+                          if(_createCampaignKey.currentState!.validate()
+                              && hasStartDate && hasEndDate) {
+                            setCampaign();
+                            _createCampaign();
+                            setState(() {
+                              createCampaign = false;
+                            });
+                          }
                         },
                         elevation: 0,
                         height: 50,
@@ -1035,6 +1058,33 @@ class _CampaignsPageState extends State<CampaignsPage> {
         }
     );
   }
+
+  /// Checks whether a start date was selected or not.
+  void _checkIfStartDateSet() {
+    if (startDate == null) {
+      setState(() {
+        hasStartDate = false;
+      });
+    } else {
+      setState(() {
+        hasStartDate = true;
+      });
+    }
+  }
+
+  /// Checks whether an end date was selected or not.
+  void _checkIfEndDateSet() {
+    if (startDate == null) {
+      setState(() {
+        hasEndDate = false;
+      });
+    } else {
+      setState(() {
+        hasEndDate = true;
+      });
+    }
+  }
+
 
   Widget menuBar() {
     return Container(

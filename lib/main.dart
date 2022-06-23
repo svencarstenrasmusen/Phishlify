@@ -163,6 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   child: Row(
                     children: [
+                      //Remember Me checkbox, currently NOT in use.
                       Checkbox(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4)),

@@ -17,6 +17,7 @@ class ProjectsPage extends StatefulWidget {
 
 class _ProjectsPageState extends State<ProjectsPage> {
   String? selectedLanguage;
+  bool hasLanguage = true;
   bool createProject = false;
   bool _isLoading = false;
 
@@ -31,6 +32,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
   //DATETIMES
   DateTime? startDate;
   DateTime? endDate;
+
+  bool hasStartDate = true;
+  bool hasEndDate = true;
 
   //KEYS
   final GlobalKey<FormState> _createProjectKey = GlobalKey<FormState>();
@@ -364,6 +368,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: selectLanguageMenu()
               ),
+              hasLanguage
+                ? Container()
+                : Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  child: Text("Please select a language.", style: TextStyle(color: Colors.red)),
+              ),
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -413,18 +423,32 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 ),
               ),
               SizedBox(height: 10),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Row(
+                  children: [
+                    Expanded(child: startDateButton()),
+                    SizedBox(width: 10),
+                    Expanded(child: endDateButton()),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: Container(
                   child: Row(
                     children: [
-                      Expanded(child: startDateButton()),
-                      SizedBox(width: 10),
-                      Expanded(child: endDateButton()),
+                      hasStartDate
+                        ? Expanded(child: Container())
+                        : Expanded(child: Text("Please select a start date", style: TextStyle(color: Colors.red))),
+                      hasEndDate
+                          ? Expanded(child: Container())
+                          : Expanded(child: Text("Please select an end date", style: TextStyle(color: Colors.red))),
                     ],
                   ),
                 ),
               ),
+              Spacer(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
@@ -433,11 +457,18 @@ class _ProjectsPageState extends State<ProjectsPage> {
                       flex: 3,
                       child: MaterialButton(
                         onPressed: () {
-                          _setProject();
-                          _createProject();
-                          setState(() {
-                            createProject = false;
-                          });
+                          _checkIfLanguageSelected();
+                          _checkIfStartDateSet();
+                          _checkIfEndDateSet();
+                          //Check if all details for a project were entered
+                          if (_createProjectKey.currentState!.validate()
+                              && hasStartDate && hasEndDate && hasLanguage) {
+                            _setProject();
+                            _createProject();
+                            setState(() {
+                              createProject = false;
+                            });
+                          }
                         },
                         elevation: 0,
                         height: 50,
@@ -613,6 +644,45 @@ class _ProjectsPageState extends State<ProjectsPage> {
     setState(() {
       isLoading = !isLoading;
     });
+  }
+
+  /// Checks whether a language was selected or not.
+  void _checkIfLanguageSelected() {
+    if (selectedLanguage == null) {
+      setState(() {
+        hasLanguage = false;
+      });
+    } else {
+      setState(() {
+        hasLanguage = true;
+      });
+    }
+  }
+
+  /// Checks whether a start date was selected or not.
+  void _checkIfStartDateSet() {
+    if (startDate == null) {
+      setState(() {
+        hasStartDate = false;
+      });
+    } else {
+      setState(() {
+        hasStartDate = true;
+      });
+    }
+  }
+
+  /// Checks whether an end date was selected or not.
+  void _checkIfEndDateSet() {
+    if (startDate == null) {
+      setState(() {
+        hasEndDate = false;
+      });
+    } else {
+      setState(() {
+        hasEndDate = true;
+      });
+    }
   }
 
   _setProject() {
