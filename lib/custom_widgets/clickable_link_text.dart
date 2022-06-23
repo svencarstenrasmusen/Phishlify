@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class ClickableLinkText extends StatefulWidget {
   final String text;
+  final Function()? onClick;
 
-  ClickableLinkText({required this.text});
+  ClickableLinkText({required this.text, this.onClick});
 
   @override
   _ClickableLinkTextState createState() => _ClickableLinkTextState();
@@ -37,7 +38,11 @@ class _ClickableLinkTextState extends State<ClickableLinkText> {
               mouseCursor: SystemMouseCursors.click,
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  print("Clicked forgot password.");
+                  if(widget.onClick != null) {
+                    widget.onClick!();
+                  } else {
+                    print("Clicked ${widget.text}");
+                  }
                 },
             )
         ),

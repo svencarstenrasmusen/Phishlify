@@ -200,12 +200,10 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Don't have an account? "),
-                    GestureDetector(
-                        child: Text("Sign up",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        onTap: () {
-                            Navigator.pushNamed(context, '/register');
-                        })
+                    ClickableLinkText(
+                      text: "Sign Up",
+                      onClick: () { Navigator.pushNamed(context, '/register'); },
+                    )
                   ],
                 )
               ],

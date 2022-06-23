@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
 import 'package:phishing_framework/data/models.dart';
 import 'package:phishing_framework/dashboard_page.dart';
+import 'package:phishing_framework/custom_widgets/clickable_link_text.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key, required this.title}) : super(key: key);
@@ -231,12 +232,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Already have an account? "),
-                    GestureDetector(
-                      child: Text("Login",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    ClickableLinkText(
+                      text: "Login",
+                      onClick: () { Navigator.pop(context); },
                     )
                   ],
                 )
