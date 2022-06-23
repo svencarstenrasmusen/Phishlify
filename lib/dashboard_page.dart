@@ -64,6 +64,9 @@ class _DashboardPageState extends State<DashboardPage> {
           menuButton(Icons.article_outlined, "User Guide", "/dashboard", false),
           const SizedBox(height: 10),
           menuButton(Icons.description_outlined, "API Document", "/dashboard", false),
+          Spacer(),
+          menuButton(
+              Icons.logout, "Logout", "/", false),
         ],
       ),
     );
@@ -104,6 +107,10 @@ class _DashboardPageState extends State<DashboardPage> {
               MaterialPageRoute(
                   builder: (context) => CampaignsPage(title: "Campaigns", user: widget.user)),
             );
+            break;
+          case '/':
+          //remove all previous pages to disable back-button pressing back into account.
+            Navigator.pushNamedAndRemoveUntil(context, '/', ModalRoute.withName('/'));
             break;
           default:
             Navigator.pushNamed(context, routeName);
