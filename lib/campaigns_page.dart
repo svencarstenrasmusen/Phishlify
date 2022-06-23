@@ -466,16 +466,28 @@ class _CampaignsPageState extends State<CampaignsPage> {
     return MaterialButton(
       color: Colors.lightGreenAccent,
       onPressed: () async {
-        _toggleLoading();
-        for (var element in emails) {
-          await dataProvider.sendEmail(element.email!, emailSubjectController.text, emailTextController.text);
+        if (_hasEmails()) {
+          _toggleLoading();
+          for (var element in emails) {
+            await dataProvider.sendEmail(element.email!, emailSubjectController.text, emailTextController.text);
+          }
+          _toggleLoading();
+          showEmailSendSuccess();
+        } else {
+          showNoEmailsAddedDialog();
         }
-        _toggleLoading();
-        showEmailSendSuccess();
       },
       height: 25,
       child: Text("Send Email", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
     );
+  }
+
+  bool _hasEmails() {
+    if (emails.isEmpty) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   Widget emailList() {
@@ -894,6 +906,25 @@ class _CampaignsPageState extends State<CampaignsPage> {
                 Icon(Icons.check_circle, size: 60, color: Colors.green),
                 SizedBox(height: 20),
                 Text("Email(s) were sent successfully!"),
+              ],
+            ),
+          );
+        }
+    );
+  }
+
+  showNoEmailsAddedDialog() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.warning, size: 60, color: Colors.yellow),
+                SizedBox(height: 20),
+                Text("You have not added any target emails as recipients."),
               ],
             ),
           );
