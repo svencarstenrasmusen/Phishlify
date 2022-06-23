@@ -5,6 +5,7 @@ import 'package:phishing_framework/register_page.dart';
 import 'package:phishing_framework/projects_page.dart';
 import 'package:phishing_framework/data/dataprovider.dart';
 import 'package:phishing_framework/data/models.dart';
+import 'package:phishing_framework/custom_widgets/clickable_link_text.dart';
 
 void main() {
   runApp(const MyApp());
@@ -175,29 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       Text("Remember me", style: TextStyle(color: Colors.grey)),
                       Spacer(),
-                      MouseRegion(
-                        onEnter: (e) {
-                          setState(() {
-                            isHovering = true;
-                          });
-                        },
-                        onExit: (e) {
-                          setState(() {
-                            isHovering = false;
-                          });
-                        },
-                        child: SelectableText.rich(
-                            TextSpan(
-                                text: "Forgot Password?",
-                                style: TextStyle(fontWeight: FontWeight.bold, color: isHovering? Colors.blue : Colors.black),
-                                mouseCursor: SystemMouseCursors.click,
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    print("Clicked forgot password.");
-                                  },
-                            )
-                        ),
-                      )
+                      ClickableLinkText(text: "Forgot Password?")
                     ],
                   ),
                 ),
