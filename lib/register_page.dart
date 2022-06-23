@@ -191,26 +191,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   textAlign: TextAlign.left,
                 ),
                 SizedBox(height: 25),
-                Container(
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4)),
-                        activeColor: Colors.green,
-                        value: termAgreement,
-                        onChanged: (value) => {
-                          setState(() {
-                            termAgreement = !termAgreement;
-                          })
-                        },
-                      ),
-                      Text("I agree to the terms of Phishlify", style: TextStyle(color: Colors.grey)),
-                      Spacer(),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 25),
                 MaterialButton(
                   minWidth: 400,
                   height: 50,
