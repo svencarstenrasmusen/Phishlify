@@ -8,12 +8,10 @@ router.post('/', (req, res) => {
     let name = req.body.name;
     let projectId = req.body.projectId;
     let description = req.body.description;
-    let startDate = req.body.startDate;
-    let endDate = req.body.endDate;
     let domain = req.body.domain;
 
-    create_campaign_query = `INSERT INTO campaigns (projectId, name, description, startDate, endDate, domain)
-    VALUES (${projectId}, "${name}", "${description}", "${startDate}", "${endDate}", "${domain}")`;
+    create_campaign_query = `INSERT INTO campaigns (projectId, name, description, domain)
+    VALUES (${projectId}, "${name}", "${description}", "${domain}")`;
 
 
     connection.query(create_campaign_query, function (err, results) {
