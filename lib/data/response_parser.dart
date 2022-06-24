@@ -44,7 +44,9 @@ class ResponseParser {
         domain: jsonCampaign['domain'],
         startDate: formatDate(jsonCampaign['startDate']),
         endDate: formatDate(jsonCampaign['endDate']),
-        description: jsonCampaign['description']
+        description: jsonCampaign['description'],
+        subject: jsonCampaign['subject'],
+        content: jsonCampaign['content'],
     );
   }
 

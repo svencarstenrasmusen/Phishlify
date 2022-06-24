@@ -74,10 +74,13 @@ class Campaign {
   String? name;
   String? domain;
   String? description;
+  String? subject;
+  String? content;
   DateTime? startDate;
   DateTime? endDate;
 
-  Campaign({this.id, this.projectId, this.name, this.domain, this.description, this.startDate, this.endDate});
+
+  Campaign({this.id, this.projectId, this.name, this.domain, this.description, this.startDate, this.endDate, this.subject, this.content});
 
   String formattedStartDate() {
     String dayFormatted = "0";
