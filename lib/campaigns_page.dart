@@ -796,7 +796,7 @@ class _CampaignsPageState extends State<CampaignsPage> {
 
   Widget emailTextBox() {
     if(widget.selectedCampaign!.subject != null) {
-      emailTextController.text = widget.selectedCampaign!.subject!;
+      emailTextController.text = widget.selectedCampaign!.content!;
     }
     return Container(
       color: Colors.grey[200],
